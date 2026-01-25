@@ -3,7 +3,7 @@ import { useSeo } from "@/hooks/use-seo";
 
 export default function About() {
   useSeo({
-    title: "Nosotros | Combos Familia",
+    title: "Nosotros | TuDespensa25",
     description: "Una tienda creada para acercar familias: tú compras, nosotros entregamos con cuidado.",
     canonicalPath: "/nosotros",
   });

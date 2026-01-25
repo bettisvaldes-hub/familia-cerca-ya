@@ -1,11 +1,21 @@
 import { Link } from "react-router-dom";
+import siteLogo from "@/assets/logo-tudespensa25.png";
 
 export function SiteFooter() {
   return (
     <footer className="border-t bg-card">
       <div className="container grid gap-8 py-10 md:grid-cols-3">
         <div>
-          <p className="font-serif text-lg">Combos Familia</p>
+          <div className="flex items-center gap-2">
+            <img
+              src={siteLogo}
+              alt="Logo de TuDespensa25"
+              className="h-8 w-8 rounded-md object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+            <p className="font-serif text-lg">TuDespensa25</p>
+          </div>
           <p className="mt-2 text-sm text-muted-foreground">
             Nacimos para ayudar a las familias a mantenerse unidas, incluso cuando la distancia los separa.
           </p>
@@ -34,7 +44,7 @@ export function SiteFooter() {
 
       <div className="border-t">
         <div className="container flex flex-col gap-2 py-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Combos Familia. Todos los derechos reservados.</p>
+          <p>© {new Date().getFullYear()} TuDespensa25. Todos los derechos reservados.</p>
           <p>Pagos seguros · Entrega local · Precios en USD</p>
         </div>
       </div>

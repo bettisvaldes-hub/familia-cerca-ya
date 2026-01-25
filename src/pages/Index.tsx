@@ -9,7 +9,7 @@ import { HeartHandshake, ShieldCheck, Truck, Zap } from "lucide-react";
 
 const Index = () => {
   useSeo({
-    title: "Combos Familia | Envío de alimentos a tu familia",
+    title: "TuDespensa25 | Envío de productos a tu familia",
     description:
       "Envía alimentos, esenciales y productos del hogar a tu familia desde el extranjero. Compra rápida y segura en USD con entrega local.",
     canonicalPath: "/",
