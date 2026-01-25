@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { storeCategories } from "@/data/categories";
 import siteLogo from "@/assets/logo-tudespensa25.png";
+import { buildWhatsAppHref } from "@/lib/whatsapp";
 
 const navItems = [
   { to: "/", label: "Inicio" },
@@ -26,9 +27,6 @@ const navItems = [
 const socialLinks = {
   instagram: "https://instagram.com/tudespensa25",
   facebook: "https://facebook.com/tudespensa25",
-  whatsapp: `https://wa.me/0000000000?text=${encodeURIComponent(
-    "Hola TuDespensa25, necesito ayuda con mi compra.",
-  )}`,
 } as const;
 
 function CategoryMegaMenu() {
@@ -87,6 +85,7 @@ function CategoryMegaMenu() {
 
 export function SiteHeader() {
   const { count } = useCart();
+  const whatsappLink = buildWhatsAppHref("Hola TuDespensa25, necesito ayuda con mi compra.");
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -184,7 +183,7 @@ export function SiteHeader() {
             <Facebook className="h-4 w-4" />
           </a>
           <a
-            href={socialLinks.whatsapp}
+            href={whatsappLink}
             target="_blank"
             rel="noreferrer"
             aria-label="Abrir WhatsApp de TuDespensa25"
