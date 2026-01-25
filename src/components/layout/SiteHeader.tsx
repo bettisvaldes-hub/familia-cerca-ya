@@ -2,7 +2,7 @@ import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/context/cart";
-import { ShoppingCart } from "lucide-react";
+import { Facebook, Instagram, MessageCircle, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   NavigationMenu,
@@ -22,6 +22,14 @@ const navItems = [
   { to: "/nosotros", label: "Nosotros" },
   { to: "/contacto", label: "Contacto" },
 ];
+
+const socialLinks = {
+  instagram: "https://instagram.com/tudespensa25",
+  facebook: "https://facebook.com/tudespensa25",
+  whatsapp: `https://wa.me/0000000000?text=${encodeURIComponent(
+    "Hola TuDespensa25, necesito ayuda con mi compra.",
+  )}`,
+} as const;
 
 function CategoryMegaMenu() {
   return (
@@ -154,6 +162,38 @@ export function SiteHeader() {
           ))}
         </div>
       </nav>
+
+      <div className="border-t bg-background/60">
+        <div className="container flex items-center justify-end gap-1 py-2">
+          <a
+            href={socialLinks.instagram}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Abrir Instagram de TuDespensa25"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            <Instagram className="h-4 w-4" />
+          </a>
+          <a
+            href={socialLinks.facebook}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Abrir Facebook de TuDespensa25"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            <Facebook className="h-4 w-4" />
+          </a>
+          <a
+            href={socialLinks.whatsapp}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Abrir WhatsApp de TuDespensa25"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            <MessageCircle className="h-4 w-4" />
+          </a>
+        </div>
+      </div>
     </header>
   );
 }
