@@ -6,6 +6,17 @@ import { Button } from "@/components/ui/button";
 import { useSeo } from "@/hooks/use-seo";
 import { flattenStoreCategories, storeCategories } from "@/data/categories";
 import { normalizeCategoryId } from "@/data/legacy-catalog";
+import { useMunicipality } from "@/context/municipality";
+import { artemisaMunicipalities } from "@/data/municipalities-artemisa";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type StoreCategoryId = ReturnType<typeof flattenStoreCategories>[number]["id"];
 
@@ -22,6 +33,9 @@ export default function Combos() {
     canonicalPath: "/tienda",
   });
 
+  const { municipality, setMunicipality } = useMunicipality();
+  const [municipalityDraftId, setMunicipalityDraftId] = useState<string>(municipality ? String(municipality.id) : "");
+
   const [searchParams, setSearchParams] = useSearchParams();
   const initial = normalizeCategoryId(searchParams.get("cat") || "combos") as StoreCategoryId;
   const [filter, setFilter] = useState<StoreCategoryId>(initial);
@@ -35,28 +49,95 @@ export default function Combos() {
   const filtered = useMemo(() => {
     const parentById = new Map(flatCategories.map((c) => [c.id, c.parentId] as const));
     const isTopLevel = storeCategories.some((c) => c.id === filter);
-    return products.filter((p) => {
+    const byCategory = products.filter((p) => {
       if (p.categoryId === filter) return true;
       if (!isTopLevel) return false;
       const parent = parentById.get(p.categoryId);
       return parent === filter;
     });
-  }, [filter]);
+
+    // Filtrado por municipio: si el producto tiene `availableIn`, debe incluir el id.
+    // Si no tiene `availableIn`, asumimos disponibilidad general en Artemisa.
+    if (!municipality) return byCategory;
+    return byCategory.filter((p) => !p.availableIn?.length || p.availableIn.includes(municipality.id));
+  }, [filter, municipality]);
 
   const filterLabel =
     flatCategories.find((c) => c.id === filter)?.label ?? "Tienda";
 
   return (
     <main className="container py-10">
+      <Dialog open={!municipality}>
+        <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
+          <DialogHeader>
+            <DialogTitle className="font-serif">Selecciona tu municipio</DialogTitle>
+            <DialogDescription>
+              Entregamos en toda la provincia Artemisa (Cuba). Elige tu municipio para mostrar solo lo disponible.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-2">
+            <Select value={municipalityDraftId} onValueChange={setMunicipalityDraftId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Elige un municipio" />
+              </SelectTrigger>
+              <SelectContent>
+                {artemisaMunicipalities.map((m) => (
+                  <SelectItem key={m.id} value={String(m.id)}>
+                    {m.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Puedes cambiar el municipio después desde la tienda.
+            </p>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="cta"
+              disabled={!municipalityDraftId}
+              onClick={() => {
+                const next = artemisaMunicipalities.find((m) => String(m.id) === municipalityDraftId) ?? null;
+                setMunicipality(next);
+              }}
+            >
+              Ver productos
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="font-serif text-3xl">Tienda · {filterLabel}</h1>
           <p className="mt-2 text-muted-foreground">
-            Navega por categorías y agrega productos al carrito en segundos.
+            Entregamos en toda la provincia Artemisa (Cuba).{municipality ? ` Municipio: ${municipality.name}.` : ""}
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Select
+            value={municipality ? String(municipality.id) : ""}
+            onValueChange={(v) => {
+              const next = artemisaMunicipalities.find((m) => String(m.id) === v) ?? null;
+              setMunicipality(next);
+              setMunicipalityDraftId(v);
+            }}
+          >
+            <SelectTrigger className="h-9 w-[220px]">
+              <SelectValue placeholder="Municipio" />
+            </SelectTrigger>
+            <SelectContent>
+              {artemisaMunicipalities.map((m) => (
+                <SelectItem key={m.id} value={String(m.id)}>
+                  {m.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           {topLevelFilters.map((c) => (
             <Button
               key={c.id}
@@ -79,7 +160,7 @@ export default function Combos() {
       </header>
 
       {filtered.length > 0 ? (
-        <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {filtered.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
