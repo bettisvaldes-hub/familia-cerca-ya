@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useMemo, useReducer } from "react";
-import type { Combo } from "@/data/combos";
+import type { Product } from "@/data/products";
 
 export type CartItem = {
-  comboId: string;
+  productId: string;
   name: string;
   priceUsd: number;
   image: string;
@@ -14,9 +14,9 @@ type CartState = {
 };
 
 type CartAction =
-  | { type: "ADD"; combo: Combo; quantity?: number }
-  | { type: "REMOVE"; comboId: string }
-  | { type: "SET_QTY"; comboId: string; quantity: number }
+  | { type: "ADD"; product: Product; quantity?: number }
+  | { type: "REMOVE"; productId: string }
+  | { type: "SET_QTY"; productId: string; quantity: number }
   | { type: "CLEAR" };
 
 const STORAGE_KEY = "combos_familia_cart_v1";
@@ -25,21 +25,21 @@ function reducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case "ADD": {
       const q = action.quantity ?? 1;
-      const existing = state.items.find((i) => i.comboId === action.combo.id);
+      const existing = state.items.find((i) => i.productId === action.product.id);
       if (existing) {
         return {
           items: state.items.map((i) =>
-            i.comboId === action.combo.id ? { ...i, quantity: i.quantity + q } : i,
+            i.productId === action.product.id ? { ...i, quantity: i.quantity + q } : i,
           ),
         };
       }
       return {
         items: [
           {
-            comboId: action.combo.id,
-            name: action.combo.name,
-            priceUsd: action.combo.priceUsd,
-            image: action.combo.image,
+            productId: action.product.id,
+            name: action.product.name,
+            priceUsd: action.product.priceUsd,
+            image: action.product.image,
             quantity: q,
           },
           ...state.items,
@@ -47,11 +47,11 @@ function reducer(state: CartState, action: CartAction): CartState {
       };
     }
     case "REMOVE":
-      return { items: state.items.filter((i) => i.comboId !== action.comboId) };
+      return { items: state.items.filter((i) => i.productId !== action.productId) };
     case "SET_QTY": {
       const qty = Math.max(1, Math.min(99, Math.floor(action.quantity || 1)));
       return {
-        items: state.items.map((i) => (i.comboId === action.comboId ? { ...i, quantity: qty } : i)),
+        items: state.items.map((i) => (i.productId === action.productId ? { ...i, quantity: qty } : i)),
       };
     }
     case "CLEAR":
@@ -65,9 +65,9 @@ type CartContextValue = {
   items: CartItem[];
   count: number;
   subtotalUsd: number;
-  add: (combo: Combo, quantity?: number) => void;
-  remove: (comboId: string) => void;
-  setQty: (comboId: string, quantity: number) => void;
+  add: (product: Product, quantity?: number) => void;
+  remove: (productId: string) => void;
+  setQty: (productId: string, quantity: number) => void;
   clear: () => void;
 };
 
@@ -83,13 +83,13 @@ function safeLoad(): CartState {
       items: parsed.items
         .filter(Boolean)
         .map((i) => ({
-          comboId: String(i.comboId),
+          productId: String((i as any).productId ?? (i as any).comboId ?? ""),
           name: String(i.name),
           priceUsd: Number(i.priceUsd),
           image: String(i.image),
           quantity: Number(i.quantity) || 1,
         }))
-        .filter((i) => i.comboId && i.name && Number.isFinite(i.priceUsd)),
+        .filter((i) => i.productId && i.name && Number.isFinite(i.priceUsd)),
     };
   } catch {
     return { items: [] };
@@ -114,9 +114,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       items: state.items,
       count,
       subtotalUsd,
-      add: (combo, quantity) => dispatch({ type: "ADD", combo, quantity }),
-      remove: (comboId) => dispatch({ type: "REMOVE", comboId }),
-      setQty: (comboId, quantity) => dispatch({ type: "SET_QTY", comboId, quantity }),
+      add: (product, quantity) => dispatch({ type: "ADD", product, quantity }),
+      remove: (productId) => dispatch({ type: "REMOVE", productId }),
+      setQty: (productId, quantity) => dispatch({ type: "SET_QTY", productId, quantity }),
       clear: () => dispatch({ type: "CLEAR" }),
     };
   }, [state.items]);
