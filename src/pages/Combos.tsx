@@ -3,11 +3,13 @@ import { useSearchParams } from "react-router-dom";
 import { products } from "@/data/products";
 import { ProductCard } from "@/components/store/ProductCard";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useSeo } from "@/hooks/use-seo";
 import { flattenStoreCategories, storeCategories } from "@/data/categories";
 import { normalizeCategoryId } from "@/data/legacy-catalog";
 import { useMunicipality } from "@/context/municipality";
 import { artemisaMunicipalities } from "@/data/municipalities-artemisa";
+import { filterAndSortByQuery } from "@/lib/search";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +19,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Search, X } from "lucide-react";
 
 type StoreCategoryId = ReturnType<typeof flattenStoreCategories>[number]["id"];
 
@@ -35,6 +38,8 @@ export default function Combos() {
 
   const { municipality, setMunicipality } = useMunicipality();
   const [municipalityDraftId, setMunicipalityDraftId] = useState<string>(municipality ? String(municipality.id) : "");
+
+  const [query, setQuery] = useState("");
 
   const [searchParams, setSearchParams] = useSearchParams();
   const initial = normalizeCategoryId(searchParams.get("cat") || "combos") as StoreCategoryId;
@@ -61,6 +66,10 @@ export default function Combos() {
     if (!municipality) return byCategory;
     return byCategory.filter((p) => !p.availableIn?.length || p.availableIn.includes(municipality.id));
   }, [filter, municipality]);
+
+  const filteredAndSearched = useMemo(() => {
+    return filterAndSortByQuery(filtered, query, (p) => p.name);
+  }, [filtered, query]);
 
   const filterLabel =
     flatCategories.find((c) => c.id === filter)?.label ?? "Tienda";
@@ -117,7 +126,31 @@ export default function Combos() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:items-end">
+          <div className="relative w-full sm:w-[320px]">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar productos (por nombre)…"
+              className="h-9 pl-9 pr-9"
+              aria-label="Buscar productos"
+            />
+            {query ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                onClick={() => setQuery("")}
+                aria-label="Limpiar búsqueda"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            ) : null}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
           <Select
             value={municipality ? String(municipality.id) : ""}
             onValueChange={(v) => {
@@ -156,21 +189,33 @@ export default function Combos() {
               {c.label}
             </Button>
           ))}
+          </div>
         </div>
       </header>
 
-      {filtered.length > 0 ? (
+      {filteredAndSearched.length > 0 ? (
         <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-          {filtered.map((product) => (
+          {filteredAndSearched.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </section>
       ) : (
         <section className="mt-8 rounded-lg border bg-card p-6">
-          <p className="font-medium">Aún no hay productos en esta categoría</p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Ya dejamos la estructura lista. ¿Quieres que empecemos a cargar el inventario para “{filterLabel}”?
-          </p>
+          {query ? (
+            <>
+              <p className="font-medium">No encontramos resultados</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Prueba con menos palabras o un nombre similar (ej: “pollo”, “arroz”, “aceite”).
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-medium">Aún no hay productos en esta categoría</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Ya dejamos la estructura lista. ¿Quieres que empecemos a cargar el inventario para “{filterLabel}”?
+              </p>
+            </>
+          )}
         </section>
       )}
     </main>
