@@ -103,7 +103,7 @@ export default function CartCheckout() {
                     <p className="font-medium">Aún no has agregado combos.</p>
                     <p className="mt-1 text-sm text-muted-foreground">Explora la tienda y elige el mejor para tu familia.</p>
                     <Button asChild variant="cta" className="mt-4">
-                      <Link to="/combos">Ver combos</Link>
+                      <Link to="/tienda">Ver tienda</Link>
                     </Button>
                   </div>
                 ) : (

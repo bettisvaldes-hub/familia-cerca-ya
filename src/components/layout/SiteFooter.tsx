@@ -13,8 +13,8 @@ export function SiteFooter() {
 
         <div className="grid gap-2 text-sm">
           <p className="font-medium">Enlaces</p>
-          <Link className="text-muted-foreground hover:text-foreground" to="/combos">
-            Ver combos
+          <Link className="text-muted-foreground hover:text-foreground" to="/tienda">
+            Ver tienda
           </Link>
           <Link className="text-muted-foreground hover:text-foreground" to="/preguntas">
             Preguntas frecuentes

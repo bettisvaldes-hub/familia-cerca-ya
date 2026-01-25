@@ -1,48 +1,96 @@
-import { useMemo, useState } from "react";
-import { combos, categoryLabels, type ComboCategory } from "@/data/combos";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { combos, type ComboCategory } from "@/data/combos";
 import { ComboCard } from "@/components/store/ComboCard";
 import { Button } from "@/components/ui/button";
 import { useSeo } from "@/hooks/use-seo";
+import { flattenStoreCategories, storeCategories } from "@/data/categories";
 
-const categories: Array<{ key: ComboCategory | "all"; label: string }> = [
-  { key: "all", label: "Todos" },
-  { key: "economicos", label: categoryLabels.economicos },
-  { key: "familiares", label: categoryLabels.familiares },
-  { key: "premium", label: categoryLabels.premium },
-];
+type StoreCategoryId = ReturnType<typeof flattenStoreCategories>[number]["id"];
+
+function comboToStoreCategory(comboCategory: ComboCategory): StoreCategoryId {
+  switch (comboCategory) {
+    case "economicos":
+      return "mini-combos-economicos";
+    case "familiares":
+      return "combos-familiares";
+    case "premium":
+      return "combos-premium";
+    default:
+      return "combos";
+  }
+}
+
+const flatCategories = flattenStoreCategories(storeCategories);
+const filterButtons = [
+  // filtros principales más usados
+  { id: "combos", label: "Combos" },
+  { id: "combos-familiares", label: "Combos familiares" },
+  { id: "combos-premium", label: "Combos premium" },
+  { id: "mini-combos-economicos", label: "Mini-combos económicos" },
+  { id: "aseo", label: "Aseo" },
+] as const;
 
 export default function Combos() {
   useSeo({
-    title: "Combos | Catálogo en USD",
+    title: "Tienda | Catálogo en USD",
     description:
-      "Explora combos económicos, familiares y premium. Agrega al carrito y completa el pago en 3 pasos.",
-    canonicalPath: "/combos",
+      "Explora categorías y combos listos para enviar. Agrega al carrito y completa el pago en 3 pasos.",
+    canonicalPath: "/tienda",
   });
 
-  const [filter, setFilter] = useState<ComboCategory | "all">("all");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initial = (searchParams.get("cat") || "combos") as StoreCategoryId;
+  const [filter, setFilter] = useState<StoreCategoryId>(initial);
+
+  useEffect(() => {
+    const cat = (searchParams.get("cat") || "combos") as StoreCategoryId;
+    setFilter(cat);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const filtered = useMemo(() => {
-    if (filter === "all") return combos;
-    return combos.filter((c) => c.category === filter);
+    // Todos los combos se consideran parte de la tienda.
+    if (filter === "combos") return combos;
+    // Subcategorías de combos mapeadas desde el dataset actual.
+    if (
+      filter === "combos-familiares" ||
+      filter === "combos-premium" ||
+      filter === "mini-combos-economicos"
+    ) {
+      return combos.filter((c) => comboToStoreCategory(c.category) === filter);
+    }
+    // Resto de categorías: aún sin productos.
+    return [];
   }, [filter]);
+
+  const filterLabel =
+    flatCategories.find((c) => c.id === filter)?.label ?? "Tienda";
 
   return (
     <main className="container py-10">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-serif text-3xl">Tienda · Combos listos</h1>
+          <h1 className="font-serif text-3xl">Tienda · {filterLabel}</h1>
           <p className="mt-2 text-muted-foreground">
-            Elige un combo, agrégalo al carrito y envía alimentos hoy.
+            Navega por categorías y agrega al carrito en segundos.
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {categories.map((c) => (
+          {filterButtons.map((c) => (
             <Button
-              key={c.key}
-              variant={filter === c.key ? "default" : "outline"}
+              key={c.id}
+              variant={filter === c.id ? "default" : "outline"}
               size="sm"
-              onClick={() => setFilter(c.key)}
+              onClick={() => {
+                setFilter(c.id);
+                setSearchParams((prev) => {
+                  const next = new URLSearchParams(prev);
+                  next.set("cat", c.id);
+                  return next;
+                });
+              }}
               className="whitespace-nowrap"
             >
               {c.label}
@@ -51,11 +99,20 @@ export default function Combos() {
         </div>
       </header>
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((combo) => (
-          <ComboCard key={combo.id} combo={combo} />
-        ))}
-      </section>
+      {filtered.length > 0 ? (
+        <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((combo) => (
+            <ComboCard key={combo.id} combo={combo} />
+          ))}
+        </section>
+      ) : (
+        <section className="mt-8 rounded-lg border bg-card p-6">
+          <p className="font-medium">Aún no hay productos en esta categoría</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Ya dejamos la estructura lista. ¿Quieres que empecemos a cargar productos para “{filterLabel}”?
+          </p>
+        </section>
+      )}
     </main>
   );
 }
