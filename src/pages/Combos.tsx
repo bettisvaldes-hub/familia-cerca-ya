@@ -5,6 +5,7 @@ import { ProductCard } from "@/components/store/ProductCard";
 import { Button } from "@/components/ui/button";
 import { useSeo } from "@/hooks/use-seo";
 import { flattenStoreCategories, storeCategories } from "@/data/categories";
+import { normalizeCategoryId } from "@/data/legacy-catalog";
 
 type StoreCategoryId = ReturnType<typeof flattenStoreCategories>[number]["id"];
 
@@ -22,11 +23,11 @@ export default function Combos() {
   });
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const initial = (searchParams.get("cat") || "combos") as StoreCategoryId;
+  const initial = normalizeCategoryId(searchParams.get("cat") || "combos") as StoreCategoryId;
   const [filter, setFilter] = useState<StoreCategoryId>(initial);
 
   useEffect(() => {
-    const cat = (searchParams.get("cat") || "combos") as StoreCategoryId;
+    const cat = normalizeCategoryId(searchParams.get("cat") || "combos") as StoreCategoryId;
     setFilter(cat);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
