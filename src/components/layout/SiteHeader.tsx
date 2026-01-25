@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { storeCategories } from "@/data/categories";
+import siteLogo from "@/assets/logo-tudespensa25.png";
 
 const navItems = [
   { to: "/", label: "Inicio" },
@@ -83,8 +84,15 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container flex h-14 items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-baseline gap-2">
-            <span className="font-serif text-lg">Combos Familia</span>
+          <Link to="/" className="flex items-center gap-2">
+            <img
+              src={siteLogo}
+              alt="Logo de TuDespensa25"
+              className="h-8 w-8 shrink-0 rounded-md object-contain"
+              loading="eager"
+              decoding="async"
+            />
+            <span className="font-serif text-lg">TuDespensa25</span>
             <Badge variant="secondary" className="hidden sm:inline-flex">
               Envíos locales
             </Badge>
