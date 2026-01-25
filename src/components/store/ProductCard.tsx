@@ -1,3 +1,4 @@
+import * as React from "react";
 import type { Product } from "@/data/products";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +7,16 @@ import { useCart } from "@/context/cart";
 import { toast } from "@/components/ui/use-toast";
 import { formatUsd } from "@/lib/money";
 import { flattenStoreCategories, storeCategories } from "@/data/categories";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 
 const categoryLabelById = new Map(
   flattenStoreCategories(storeCategories).map((c) => [c.id, c.label] as const),
@@ -13,11 +24,31 @@ const categoryLabelById = new Map(
 
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
+  const isMobile = useIsMobile();
+  const [open, setOpen] = React.useState(false);
 
   const badgeLabel = categoryLabelById.get(product.categoryId) ?? "Producto";
 
   return (
-    <Card id={product.id} className="overflow-hidden">
+    <>
+      <Card
+        id={product.id}
+        className="overflow-hidden"
+        onClick={(e) => {
+          if (!isMobile) return;
+          if ((e.target as HTMLElement | null)?.closest("button,a")) return;
+          setOpen(true);
+        }}
+        role={isMobile ? "button" : undefined}
+        tabIndex={isMobile ? 0 : undefined}
+        onKeyDown={(e) => {
+          if (!isMobile) return;
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setOpen(true);
+          }
+        }}
+      >
       <div className="aspect-[3/2] overflow-hidden">
         <img
           src={product.image}
@@ -34,7 +65,7 @@ export function ProductCard({ product }: { product: Product }) {
             {badgeLabel}
           </Badge>
         </div>
-        <p className="text-sm text-muted-foreground">{product.shortDescription}</p>
+        <p className="text-sm text-muted-foreground line-clamp-2">{product.shortDescription}</p>
       </CardHeader>
 
       <CardContent className="space-y-3">
@@ -66,7 +97,64 @@ export function ProductCard({ product }: { product: Product }) {
           Agregar al carrito
         </Button>
       </CardFooter>
-    </Card>
+      </Card>
+
+      {isMobile ? (
+        <Drawer open={open} onOpenChange={setOpen}>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle className="font-serif">{product.name}</DrawerTitle>
+              <DrawerDescription>{badgeLabel}</DrawerDescription>
+            </DrawerHeader>
+
+            <div className="px-4">
+              <div className="aspect-[3/2] overflow-hidden rounded-lg border bg-card">
+                <img
+                  src={product.image}
+                  alt={`Imagen del ${product.name}`}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+
+              <p className="mt-4 text-sm text-muted-foreground">{product.shortDescription}</p>
+
+              {product.included?.length ? (
+                <div className="mt-4">
+                  <p className="text-sm font-medium">Incluye</p>
+                  <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+                    {product.included.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              <p className="mt-4 text-lg font-semibold">{formatUsd(product.priceUsd)}</p>
+            </div>
+
+            <DrawerFooter>
+              <Button
+                variant="cta"
+                onClick={() => {
+                  add(product, 1);
+                  toast({
+                    title: "Agregado al carrito",
+                    description: `${product.name} se agregó correctamente.`,
+                  });
+                  setOpen(false);
+                }}
+              >
+                Agregar al carrito
+              </Button>
+              <DrawerClose asChild>
+                <Button variant="outline">Cerrar</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      ) : null}
+    </>
   );
 }
 

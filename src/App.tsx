@@ -12,6 +12,7 @@ import Faq from "@/pages/Faq";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import { CartProvider } from "@/context/cart";
+import { MunicipalityProvider } from "@/context/municipality";
 
 const queryClient = new QueryClient();
 
@@ -21,23 +22,25 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <CartProvider>
-          <Routes>
-            <Route element={<SiteLayout />}>
-              <Route path="/" element={<Index />} />
-              {/* Catálogo principal */}
-              <Route path="/tienda" element={<Combos />} />
-              {/* Alias histórico */}
-              <Route path="/combos" element={<Combos />} />
-              <Route path="/carrito" element={<CartCheckout />} />
-              <Route path="/preguntas" element={<Faq />} />
-              <Route path="/nosotros" element={<About />} />
-              <Route path="/contacto" element={<Contact />} />
-            </Route>
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </CartProvider>
+        <MunicipalityProvider>
+          <CartProvider>
+            <Routes>
+              <Route element={<SiteLayout />}>
+                <Route path="/" element={<Index />} />
+                {/* Catálogo principal */}
+                <Route path="/tienda" element={<Combos />} />
+                {/* Alias histórico */}
+                <Route path="/combos" element={<Combos />} />
+                <Route path="/carrito" element={<CartCheckout />} />
+                <Route path="/preguntas" element={<Faq />} />
+                <Route path="/nosotros" element={<About />} />
+                <Route path="/contacto" element={<Contact />} />
+              </Route>
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </CartProvider>
+        </MunicipalityProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

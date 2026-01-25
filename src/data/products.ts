@@ -10,6 +10,11 @@ export type Product = {
   categoryId: string;
   /** Lista opcional (útil para combos) */
   included?: string[];
+  /**
+   * IDs numéricos de municipio donde está disponible.
+   * Si es undefined, asumimos disponible en toda la provincia.
+   */
+  availableIn?: number[];
 };
 
 const placeholder = "/placeholder.svg";
