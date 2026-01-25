@@ -22,20 +22,15 @@ function comboToStoreCategory(comboCategory: ComboCategory): StoreCategoryId {
 }
 
 const flatCategories = flattenStoreCategories(storeCategories);
-const filterButtons = [
-  // filtros principales más usados
-  { id: "combos", label: "Combos" },
-  { id: "combos-familiares", label: "Combos familiares" },
-  { id: "combos-premium", label: "Combos premium" },
-  { id: "mini-combos-economicos", label: "Mini-combos económicos" },
-  { id: "aseo", label: "Aseo" },
-] as const;
+const topLevelFilters: Array<{ id: StoreCategoryId; label: string }> = storeCategories.map(
+  (c) => ({ id: c.id as StoreCategoryId, label: c.label }),
+);
 
 export default function Combos() {
   useSeo({
     title: "Tienda | Catálogo en USD",
     description:
-      "Explora categorías y combos listos para enviar. Agrega al carrito y completa el pago en 3 pasos.",
+      "Explora productos por categorías y compra en USD con entrega local. Agrega al carrito y completa el pago en 3 pasos.",
     canonicalPath: "/tienda",
   });
 
@@ -50,7 +45,7 @@ export default function Combos() {
   }, [searchParams]);
 
   const filtered = useMemo(() => {
-    // Todos los combos se consideran parte de la tienda.
+    // “Combos” es solo una categoría más dentro de la tienda.
     if (filter === "combos") return combos;
     // Subcategorías de combos mapeadas desde el dataset actual.
     if (
@@ -73,12 +68,12 @@ export default function Combos() {
         <div>
           <h1 className="font-serif text-3xl">Tienda · {filterLabel}</h1>
           <p className="mt-2 text-muted-foreground">
-            Navega por categorías y agrega al carrito en segundos.
+            Navega por categorías y agrega productos al carrito en segundos.
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {filterButtons.map((c) => (
+          {topLevelFilters.map((c) => (
             <Button
               key={c.id}
               variant={filter === c.id ? "default" : "outline"}
@@ -109,7 +104,7 @@ export default function Combos() {
         <section className="mt-8 rounded-lg border bg-card p-6">
           <p className="font-medium">Aún no hay productos en esta categoría</p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Ya dejamos la estructura lista. ¿Quieres que empecemos a cargar productos para “{filterLabel}”?
+            Ya dejamos la estructura lista. ¿Quieres que empecemos a cargar el inventario para “{filterLabel}”?
           </p>
         </section>
       )}
