@@ -68,8 +68,18 @@ export default function Combos() {
   }, [filter, municipality]);
 
   const filteredAndSearched = useMemo(() => {
-    return filterAndSortByQuery(filtered, query, (p) => p.name);
-  }, [filtered, query]);
+    // Si hay búsqueda, NO la limitamos a la categoría seleccionada.
+    // Mantiene el filtro por municipio (disponibilidad).
+    if (query.trim()) {
+      const base = !municipality
+        ? products
+        : products.filter((p) => !p.availableIn?.length || p.availableIn.includes(municipality.id));
+      return filterAndSortByQuery(base, query, (p) => p.name);
+    }
+
+    // Sin búsqueda: respetamos categoría + municipio.
+    return filtered;
+  }, [filtered, query, municipality]);
 
   const filterLabel =
     flatCategories.find((c) => c.id === filter)?.label ?? "Tienda";
