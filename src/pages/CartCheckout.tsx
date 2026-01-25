@@ -9,11 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import { useSeo } from "@/hooks/use-seo";
 import { formatUsd } from "@/lib/money";
+import { buildWhatsAppHref } from "@/lib/whatsapp";
 
 const recipientSchema = z.object({
   nombre: z.string().trim().min(2, "Nombre requerido").max(80),
@@ -26,7 +26,10 @@ const recipientSchema = z.object({
 type RecipientValues = z.infer<typeof recipientSchema>;
 
 type Step = 1 | 2 | 3;
-type PayMethod = "tarjeta" | "digital" | "transferencia";
+
+// TODO: Reemplazar por tus datos reales de cobro.
+const ZELLE_RECIPIENT_NAME = "Tu Nombre";
+const ZELLE_RECIPIENT_EMAIL = "tucorreo@zelle.com";
 
 export default function CartCheckout() {
   useSeo({
@@ -37,7 +40,6 @@ export default function CartCheckout() {
 
   const { items, subtotalUsd, setQty, remove, clear } = useCart();
   const [step, setStep] = useState<Step>(1);
-  const [pay, setPay] = useState<PayMethod>("tarjeta");
 
   const form = useForm<RecipientValues>({
     resolver: zodResolver(recipientSchema),
@@ -51,7 +53,7 @@ export default function CartCheckout() {
 
   const goNextFromCart = () => {
     if (items.length === 0) {
-      toast({ title: "Tu carrito está vacío", description: "Elige un combo para continuar." });
+      toast({ title: "Tu carrito está vacío", description: "Elige productos para continuar." });
       return;
     }
     setStep(2);
@@ -63,16 +65,31 @@ export default function CartCheckout() {
     setStep(3);
   };
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
+    if (items.length === 0) {
+      toast({ title: "Tu carrito está vacío", description: "Agrega productos para enviar el pedido." });
+      return;
+    }
+
+    const ok = await form.trigger();
+    if (!ok) return;
+
     const values = form.getValues();
-    // Demo: en producción esto iría a backend (Cloud) + procesamiento de pago.
-    toast({
-      title: "Pedido confirmado (demo)",
-      description: `Avisaremos a ${values.nombre} y coordinaremos entrega.`,
+    const message = buildOrderMessage({
+      recipient: values,
+      items,
+      totalUsd: subtotalUsd,
+      zelleName: ZELLE_RECIPIENT_NAME,
+      zelleEmail: ZELLE_RECIPIENT_EMAIL,
     });
-    clear();
-    setStep(1);
-    form.reset();
+
+    const href = buildWhatsAppHref(message);
+    window.open(href, "_blank", "noopener,noreferrer");
+
+    toast({
+      title: "Te llevamos a WhatsApp",
+      description: "Envía el mensaje para confirmar el pedido y coordinar el pago por Zelle.",
+    });
   };
 
   return (
@@ -80,7 +97,7 @@ export default function CartCheckout() {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="font-serif text-3xl">Carrito y Checkout</h1>
-          <p className="mt-2 text-muted-foreground">Proceso simple en 3 pasos: Carrito · Destinatario · Pago</p>
+          <p className="mt-2 text-muted-foreground">Proceso simple en 3 pasos: Carrito · Destinatario · WhatsApp (Zelle)</p>
         </div>
 
         <div className="flex gap-2">
@@ -100,7 +117,7 @@ export default function CartCheckout() {
               <CardContent className="space-y-4">
                 {items.length === 0 ? (
                   <div className="rounded-lg border bg-background p-4">
-                    <p className="font-medium">Aún no has agregado combos.</p>
+                    <p className="font-medium">Aún no has agregado productos.</p>
                     <p className="mt-1 text-sm text-muted-foreground">Explora la tienda y elige el mejor para tu familia.</p>
                     <Button asChild variant="cta" className="mt-4">
                       <Link to="/tienda">Ver tienda</Link>
@@ -109,7 +126,7 @@ export default function CartCheckout() {
                 ) : (
                   <div className="space-y-3">
                     {items.map((it) => (
-                      <div key={it.comboId} className="flex gap-3 rounded-lg border bg-background p-3">
+                      <div key={it.productId} className="flex gap-3 rounded-lg border bg-background p-3">
                         <img
                           src={it.image}
                           alt={`Imagen del ${it.name}`}
@@ -120,23 +137,23 @@ export default function CartCheckout() {
                           <p className="truncate font-medium">{it.name}</p>
                           <p className="text-sm text-muted-foreground">{formatUsd(it.priceUsd)} USD</p>
                           <div className="mt-2 flex flex-wrap items-center gap-2">
-                            <Label htmlFor={`qty-${it.comboId}`} className="text-sm text-muted-foreground">
+                            <Label htmlFor={`qty-${it.productId}`} className="text-sm text-muted-foreground">
                               Cantidad
                             </Label>
                             <Input
-                              id={`qty-${it.comboId}`}
+                              id={`qty-${it.productId}`}
                               type="number"
                               inputMode="numeric"
                               min={1}
                               max={99}
                               value={it.quantity}
-                              onChange={(e) => setQty(it.comboId, Number(e.target.value))}
+                              onChange={(e) => setQty(it.productId, Number(e.target.value))}
                               className="h-9 w-20"
                             />
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => remove(it.comboId)}
+                              onClick={() => remove(it.productId)}
                               className="h-9"
                             >
                               Quitar
@@ -204,21 +221,28 @@ export default function CartCheckout() {
           {step === 3 && (
             <Card>
               <CardHeader>
-                <CardTitle className="font-serif">Pago</CardTitle>
+                <CardTitle className="font-serif">Confirmación por WhatsApp (Zelle)</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="rounded-lg border bg-background p-4">
-                  <p className="font-medium">Métodos disponibles</p>
+                  <p className="font-medium">Método de pago</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Tarjetas internacionales · Pagos digitales · Transferencias
+                    Gestionamos el pedido por WhatsApp. Pago único: Zelle.
                   </p>
                   <Separator className="my-4" />
 
-                  <RadioGroup value={pay} onValueChange={(v) => setPay(v as PayMethod)} className="grid gap-3">
-                    <PayOption value="tarjeta" label="Tarjeta internacional" description="Visa, Mastercard, etc." />
-                    <PayOption value="digital" label="Pago digital" description="Proveedores según país." />
-                    <PayOption value="transferencia" label="Transferencia" description="Te compartimos los datos al confirmar." />
-                  </RadioGroup>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-medium">Zelle</p>
+                    <p className="text-muted-foreground">
+                      Beneficiario: <span className="font-medium text-foreground">{ZELLE_RECIPIENT_NAME}</span>
+                    </p>
+                    <p className="text-muted-foreground">
+                      Email: <span className="font-medium text-foreground">{ZELLE_RECIPIENT_EMAIL}</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Al enviar el pedido por WhatsApp, te indicaremos el monto final y confirmaremos la entrega.
+                    </p>
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
@@ -226,7 +250,7 @@ export default function CartCheckout() {
                     Volver
                   </Button>
                   <Button variant="cta" onClick={placeOrder}>
-                    Confirmar pedido
+                    Enviar pedido por WhatsApp
                   </Button>
                 </div>
               </CardContent>
@@ -254,7 +278,7 @@ export default function CartCheckout() {
                 <span className="text-base font-semibold">{formatUsd(subtotalUsd)}</span>
               </div>
               <p className="rounded-lg border bg-background p-3 text-xs text-muted-foreground">
-                Nota: este checkout es una demo lista para conectar a pagos reales. El soporte por WhatsApp está siempre visible.
+                Nota: la confirmación se gestiona por WhatsApp y el pago se realiza por Zelle.
               </p>
             </CardContent>
           </Card>
@@ -305,22 +329,43 @@ function Field({
   );
 }
 
-function PayOption({
-  value,
-  label,
-  description,
+
+function buildOrderMessage({
+  recipient,
+  items,
+  totalUsd,
+  zelleName,
+  zelleEmail,
 }: {
-  value: PayMethod;
-  label: string;
-  description: string;
+  recipient: RecipientValues;
+  items: Array<{ name: string; priceUsd: number; quantity: number }>;
+  totalUsd: number;
+  zelleName: string;
+  zelleEmail: string;
 }) {
-  return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-lg border bg-background p-3">
-      <RadioGroupItem value={value} id={value} className="mt-1" />
-      <div className="space-y-1">
-        <p className="font-medium">{label}</p>
-        <p className="text-sm text-muted-foreground">{description}</p>
-      </div>
-    </label>
-  );
+  const lines = items
+    .map((it) => `- ${it.quantity} x ${it.name} (${formatUsd(it.priceUsd)}): ${formatUsd(it.priceUsd * it.quantity)}`)
+    .join("\n");
+
+  return [
+    "Hola, quiero confirmar un pedido:",
+    "",
+    "Productos:",
+    lines,
+    "",
+    `Total estimado: ${formatUsd(totalUsd)} USD`,
+    "",
+    "Datos del destinatario:",
+    `Nombre: ${recipient.nombre}`,
+    `Teléfono: ${recipient.telefono}`,
+    `Dirección: ${recipient.direccion}`,
+    `Ciudad: ${recipient.ciudad}`,
+    recipient.referencia ? `Referencia: ${recipient.referencia}` : "",
+    "",
+    "Método de pago: Zelle",
+    `Beneficiario: ${zelleName}`,
+    `Email: ${zelleEmail}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
 }

@@ -1,25 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { combos, type ComboCategory } from "@/data/combos";
-import { ComboCard } from "@/components/store/ComboCard";
+import { products } from "@/data/products";
+import { ProductCard } from "@/components/store/ProductCard";
 import { Button } from "@/components/ui/button";
 import { useSeo } from "@/hooks/use-seo";
 import { flattenStoreCategories, storeCategories } from "@/data/categories";
 
 type StoreCategoryId = ReturnType<typeof flattenStoreCategories>[number]["id"];
-
-function comboToStoreCategory(comboCategory: ComboCategory): StoreCategoryId {
-  switch (comboCategory) {
-    case "economicos":
-      return "mini-combos-economicos";
-    case "familiares":
-      return "combos-familiares";
-    case "premium":
-      return "combos-premium";
-    default:
-      return "combos";
-  }
-}
 
 const flatCategories = flattenStoreCategories(storeCategories);
 const topLevelFilters: Array<{ id: StoreCategoryId; label: string }> = storeCategories.map(
@@ -45,18 +32,14 @@ export default function Combos() {
   }, [searchParams]);
 
   const filtered = useMemo(() => {
-    // “Combos” es solo una categoría más dentro de la tienda.
-    if (filter === "combos") return combos;
-    // Subcategorías de combos mapeadas desde el dataset actual.
-    if (
-      filter === "combos-familiares" ||
-      filter === "combos-premium" ||
-      filter === "mini-combos-economicos"
-    ) {
-      return combos.filter((c) => comboToStoreCategory(c.category) === filter);
-    }
-    // Resto de categorías: aún sin productos.
-    return [];
+    const parentById = new Map(flatCategories.map((c) => [c.id, c.parentId] as const));
+    const isTopLevel = storeCategories.some((c) => c.id === filter);
+    return products.filter((p) => {
+      if (p.categoryId === filter) return true;
+      if (!isTopLevel) return false;
+      const parent = parentById.get(p.categoryId);
+      return parent === filter;
+    });
   }, [filter]);
 
   const filterLabel =
@@ -96,8 +79,8 @@ export default function Combos() {
 
       {filtered.length > 0 ? (
         <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((combo) => (
-            <ComboCard key={combo.id} combo={combo} />
+          {filtered.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </section>
       ) : (
@@ -111,3 +94,4 @@ export default function Combos() {
     </main>
   );
 }
+

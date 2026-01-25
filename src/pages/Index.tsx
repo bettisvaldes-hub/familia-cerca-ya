@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useSeo } from "@/hooks/use-seo";
-import { combos } from "@/data/combos";
-import { ComboCard } from "@/components/store/ComboCard";
+import { products } from "@/data/products";
+import { ProductCard } from "@/components/store/ProductCard";
 import { Link } from "react-router-dom";
 import { HeartHandshake, ShieldCheck, Truck, Zap } from "lucide-react";
 
@@ -15,7 +15,7 @@ const Index = () => {
     canonicalPath: "/",
   });
 
-  const destacados = combos.slice(0, 3);
+  const destacados = products.slice(0, 3);
 
   return (
     <main className="bg-background">
@@ -54,8 +54,8 @@ const Index = () => {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-              {destacados.map((c) => (
-                <ComboMiniCard key={c.id} id={c.id} name={c.name} price={c.priceUsd} image={c.image} />
+              {destacados.map((p) => (
+                <ComboMiniCard key={p.id} id={p.id} name={p.name} price={p.priceUsd} image={p.image} />
               ))}
             </div>
           </div>
@@ -76,8 +76,8 @@ const Index = () => {
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {destacados.map((combo) => (
-            <ComboCard key={combo.id} combo={combo} />
+            {destacados.map((product) => (
+              <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </section>
