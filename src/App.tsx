@@ -5,6 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { SiteLayout } from "@/components/layout/SiteLayout";
+import Combos from "@/pages/Combos";
+import CartCheckout from "@/pages/CartCheckout";
+import Faq from "@/pages/Faq";
+import About from "@/pages/About";
+import Contact from "@/pages/Contact";
+import { CartProvider } from "@/context/cart";
 
 const queryClient = new QueryClient();
 
@@ -14,11 +21,20 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <CartProvider>
+          <Routes>
+            <Route element={<SiteLayout />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/combos" element={<Combos />} />
+              <Route path="/carrito" element={<CartCheckout />} />
+              <Route path="/preguntas" element={<Faq />} />
+              <Route path="/nosotros" element={<About />} />
+              <Route path="/contacto" element={<Contact />} />
+            </Route>
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </CartProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
