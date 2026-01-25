@@ -50,8 +50,8 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       manifest: {
-        name: "Tu Despensa 25",
-        short_name: "TuDespensa",
+        name: "TuDespensa25",
+        short_name: "TuDespensa25",
         description: "Compra productos de despensa en Artemisa, Cuba",
         theme_color: "#0a7d5a",
         background_color: "#f5f5f5",
@@ -60,17 +60,17 @@ export default defineConfig(({ mode }) => ({
         start_url: "/",
         icons: [
           {
-            src: "/pwa-192x192.png",
+            src: "/pwa-icon.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "/pwa-512x512.png",
+            src: "/pwa-icon.png",
             sizes: "512x512",
             type: "image/png",
           },
           {
-            src: "/pwa-512x512.png",
+            src: "/pwa-icon.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable",
