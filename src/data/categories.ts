@@ -5,7 +5,7 @@ export type StoreCategoryNode = {
 };
 
 // Jerarquía propuesta (2 niveles) a partir de tu lista.
-// Nota: hoy el catálogo solo tiene productos en “Combos”; el resto queda listo para poblarse.
+// Nota: el catálogo está estructurado por categorías; iremos poblando productos progresivamente.
 export const storeCategories: StoreCategoryNode[] = [
   {
     id: "combos",

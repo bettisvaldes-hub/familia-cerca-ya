@@ -11,7 +11,7 @@ const Index = () => {
   useSeo({
     title: "Combos Familia | Envío de alimentos a tu familia",
     description:
-      "Envía combos de alimentos y esenciales a tu familia desde el extranjero. Compra rápida y segura en USD con entrega local.",
+      "Envía alimentos, esenciales y productos del hogar a tu familia desde el extranjero. Compra rápida y segura en USD con entrega local.",
     canonicalPath: "/",
   });
 
@@ -33,7 +33,7 @@ const Index = () => {
                 Ayuda a tu familia desde la distancia, nosotros nos encargamos del resto
               </h1>
               <p className="text-pretty text-lg text-muted-foreground">
-                Compra combos de alimentos de forma rápida, segura y confiable. Tu familia lo recibe, tú te quedas tranquilo.
+                Compra alimentos, esenciales y productos del hogar de forma rápida, segura y confiable. Tu familia lo recibe, tú te quedas tranquilo.
               </p>
 
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -48,7 +48,7 @@ const Index = () => {
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <TrustPill icon={Truck} title="Entregas rápidas" />
                 <TrustPill icon={ShieldCheck} title="Pagos seguros" />
-                <TrustPill icon={Zap} title="Combos listos" />
+                <TrustPill icon={Zap} title="Catálogo listo" />
                 <TrustPill icon={HeartHandshake} title="Atención humana" />
               </div>
             </div>
@@ -65,9 +65,9 @@ const Index = () => {
       <section className="container py-10 sm:py-14">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <h2 className="font-serif text-2xl">Combos destacados</h2>
+            <h2 className="font-serif text-2xl">Destacados</h2>
             <p className="mt-1 text-muted-foreground">
-              Listos para enviar hoy. Elige uno y agrega al carrito en segundos.
+              Opciones listas para enviar hoy. Elige una y agrega al carrito en segundos.
             </p>
           </div>
           <Button asChild variant="link" className="hidden sm:inline-flex">
