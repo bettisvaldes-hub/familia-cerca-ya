@@ -11,6 +11,7 @@ import CartCheckout from "@/pages/CartCheckout";
 import Faq from "@/pages/Faq";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
+import Install from "@/pages/Install";
 import { CartProvider } from "@/context/cart";
 import { MunicipalityProvider } from "@/context/municipality";
 
@@ -35,6 +36,7 @@ const App = () => (
                 <Route path="/preguntas" element={<Faq />} />
                 <Route path="/nosotros" element={<About />} />
                 <Route path="/contacto" element={<Contact />} />
+                <Route path="/instalar" element={<Install />} />
               </Route>
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
