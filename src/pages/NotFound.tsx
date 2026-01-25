@@ -17,7 +17,7 @@ const NotFound = () => {
         <p className="mt-3 text-muted-foreground">La página que buscas no existe o fue movida.</p>
         <div className="mt-6 flex justify-center gap-3">
           <Button asChild variant="cta">
-            <Link to="/combos">Ver combos</Link>
+            <Link to="/tienda">Ir a la tienda</Link>
           </Button>
           <Button asChild variant="outline">
             <Link to="/">Volver al inicio</Link>

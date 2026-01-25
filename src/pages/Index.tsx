@@ -38,10 +38,10 @@ const Index = () => {
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Button asChild variant="cta" size="lg">
-                  <Link to="/combos">Ver Combos</Link>
+                  <Link to="/tienda">Ver tienda</Link>
                 </Button>
                 <Button asChild variant="outline" size="lg">
-                  <Link to="/combos">Comprar ahora</Link>
+                  <Link to="/tienda">Comprar ahora</Link>
                 </Button>
               </div>
 
@@ -71,7 +71,7 @@ const Index = () => {
             </p>
           </div>
           <Button asChild variant="link" className="hidden sm:inline-flex">
-            <Link to="/combos">Ver catálogo completo</Link>
+            <Link to="/tienda">Ver catálogo completo</Link>
           </Button>
         </div>
 
@@ -148,7 +148,7 @@ function ComboMiniCard({
           <p className="text-sm font-medium">{name}</p>
           <p className="mt-1 text-sm text-muted-foreground">Desde ${price.toFixed(2)} USD</p>
           <Button asChild variant="link" className="mt-2 h-auto p-0">
-            <Link to={`/combos#${id}`}>Ver detalle</Link>
+            <Link to={`/tienda?cat=combos#${id}`}>Ver detalle</Link>
           </Button>
         </div>
       </div>
