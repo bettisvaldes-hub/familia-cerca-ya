@@ -161,7 +161,7 @@ export const products: Product[] = [
   // Aseo
   { id: "legacy-aseo-38", name: "Papel higiénico", shortDescription: "Papel higiénico", priceUsd: 2.4, image: "/images/papelhigi.png", categoryId: "aseo" },
   { id: "legacy-aseo-39", name: "Jabón 100 gr", shortDescription: "Jabón de 100 gr", priceUsd: 0.48, image: "/images/jabon.png", categoryId: "aseo" },
-  { id: "legacy-aseo-56", name: "Detergente polvo Multiuso", shortDescription: "Bolsa de 500 gr", priceUsd: 1.4, image: "/images/detergente.png", categoryId: "aseo" },
+  { id: "legacy-aseo-56", name: "Detergente polvo Multiuso", shortDescription: "Bolsa de 1 Kg", priceUsd: 1.4, image: "/images/detergente.png", categoryId: "aseo" },
 
   // Agro
   { id: "legacy-agro-59", name: "Boniato", shortDescription: "Bolsa de 5 lb", priceUsd: 2.4, image: "/images/boniato.png", categoryId: "agro-viandas-y-vegetales" },
@@ -177,14 +177,14 @@ export const products: Product[] = [
 
   // Combos (legacy)
   { id: "legacy-combo-88", name: "Combo Navideño 1", shortDescription: "2 Sobres de Spaguetis 500gr, 2 Mortadella Seara 500 gr, 2 Pasta de tomate 400 gr, Botella de aceite 1 Lt", priceUsd: 11.45, image: "/images/navidad1.png", categoryId: "combos" },
-  { id: "legacy-combo-65", name: "Combo 1", shortDescription: "Combo surtido (ver descripción completa en imagen/listado).", priceUsd: 89.45, image: "/images/combo1.png", categoryId: "combos" },
-  { id: "legacy-combo-66", name: "Combo 2", shortDescription: "Pollo, picadillo, salchichas, huevos, yogurt y leches condensadas.", priceUsd: 34.45, image: "/images/combo2.png", categoryId: "combos" },
-  { id: "legacy-combo-67", name: "Combo 3", shortDescription: "Arroz + frijol negro + azúcar.", priceUsd: 17.35, image: "/images/combo3.jpg", categoryId: "combos" },
-  { id: "legacy-combo-68", name: "Combo 4", shortDescription: "Cerdo + mortadelas + aceite + gelatina + jabón + malanga gratis.", priceUsd: 37.65, image: "/images/combo4.png", categoryId: "combos" },
-  { id: "legacy-combo-71", name: "Combo 5", shortDescription: "12 maltas guajiras + 6 leches condensadas.", priceUsd: 22.6, image: "/images/combo5.png", categoryId: "combos" },
-  { id: "legacy-combo-72", name: "Combo 6", shortDescription: "Combo grande surtido (cerdo, arroz, huevos, aseo, etc.).", priceUsd: 65.99, image: "/images/combo6.png", categoryId: "combos" },
-  { id: "legacy-combo-73", name: "Combo 7 descuento 10%", shortDescription: "Arroz + frijol + azúcar + aceite.", priceUsd: 30.99, image: "/images/combo7.png", categoryId: "combos" },
-  { id: "legacy-combo-74", name: "Combo 8", shortDescription: "Combo surtido con cerdo, básicos, malta y leches condensadas.", priceUsd: 60.99, image: "/images/combo8.png", categoryId: "combos" },
+  { id: "legacy-combo-65", name: "Combo 1", shortDescription: "1 Lomo de cerdo importado 3 lb, 1 paquete de pollo 10 lb, 1 chuleta de lomo deshuesado 2 lb, 1 masas de cerdo 2 lb, 1 picadillo de pollo 400 g, 1 paquete de salchichas, 1 mortadela de queso, 1 yogurt de fresa probiótico 1 L, 2 leches condensadas de cajita, 2 libras de frijol negro, 10 libras de arroz blanco importado, 1 bolsa de azúcar 2 lb, 1 bolsa de sal 1 lb, 2 paquetes de espaguetis 500 g, 1 pasta de tomate 400 g, 2 botellas de aceite 1 L, 1 café Dufiltro 250 g, 4 jabones de 100 g, 1 malanga 5 lb.", priceUsd: 89.45, image: "/images/combo1.png", categoryId: "combos" },
+  { id: "legacy-combo-66", name: "Combo 2", shortDescription: "1 paquete de pollo de 10 lb, 2 picadillos de pollo de 400 g, 2 paquetes de salchichas, 1 cartón de huevos (30 unidades), 1 yogurt de fresa de 1 L y 2 leches condensadas de cajita..", priceUsd: 34.45, image: "/images/combo2.png", categoryId: "combos" },
+  { id: "legacy-combo-67", name: "Combo 3", shortDescription: "10 lb de Arroz grano largo importado, 2 lb de frijol negro importado, 2 lb de azucar blanca importada ", priceUsd: 17.35, image: "/images/combo3.jpg", categoryId: "combos" },
+  { id: "legacy-combo-68", name: "Combo 4", shortDescription: "Chuleta de lomo deshuesado 2 lb (1 unidad), Masas de cerdo 2 lb (1 unidad), Mortadela de queso 500 gr (2 unidades), Mortadela clásica 500 gr (2 unidades), Aceite 1 L (2 unidades), Gelatina  (2 unidades), Jabón 100 g (5 unidades) + 5 LB de Malanga GRATIS ", priceUsd: 37.65, image: "/images/combo4.png", categoryId: "combos" },
+  { id: "legacy-combo-71", name: "Combo 5", shortDescription: "12 maltas guajiras, 6 leche condensada", priceUsd: 22.6, image: "/images/combo5.png", categoryId: "combos" },
+  { id: "legacy-combo-72", name: "Combo 6", shortDescription: "1 lomo de cerdo importado (3 lb) + 10 lb de arroz grano largo + 2 paquetes de espagueti (500 g c/u) + 1 paquete de harina de trigo (500 g) + 1 yogurt probiótico de fresa (1 L) + 1 cartón de huevos (30 u) + 2 pastas de tomate (400 g c/u) + 1 chocolate en polvo (500 g) + 2 gelatinas + 1 caja de refresco Zuko (8 sobres) + 1 café Dufiltro (250 g) + 1 paquete de papel higiénico (4 unidades) + 4 jabones (100 g c/u) + 1 bolsa de malanga (5 lb) + 1 bolsa de 10 cabezas de ajo", priceUsd: 65.99, image: "/images/combo6.png", categoryId: "combos" },
+  { id: "legacy-combo-73", name: "Combo 7 descuento 10%", shortDescription: "Arroz Grano Largo importado (10 lb), Frijol Negro Importado (4 lb), Azúcar Blanca Importada (4 lb), Aceite de Girasol 1 L (6 uds)", priceUsd: 30.99, image: "/images/combo7.png", categoryId: "combos" },
+  { id: "legacy-combo-74", name: "Combo 8", shortDescription: " Chuleta de lomo deshuesado 2 lb (1 unid), Masas de cerdo 2 lb (1 unid), Yogurt de fresa 1 L (1 unid), Arroz Grano Largo 10 , Azúcar blanca 4 lb , Frijol negro 2 lb , Spaguetis 500 gr (2 unid), Pasta de tomate 400 g (1 unid), Café Dufiltro 250 gr (1 unid), Jabón 100 g (4 unid), Malta Guajira (6 unid), Leche condensada en cajita (2 unid), Aceite 1 L (2 unid)", priceUsd: 60.99, image: "/images/combo8.png", categoryId: "combos" },
 
   // Electrodomésticos
   { id: "legacy-electro-76", name: "Olla reina Milexus", shortDescription: "Olla reina de 6L Milexus", priceUsd: 68, image: "/images/reina.png", categoryId: "electrodomesticos" },
