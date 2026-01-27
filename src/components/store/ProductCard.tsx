@@ -18,6 +18,16 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ProductDetailsBody } from "@/components/store/ProductDetailsBody";
 
 const categoryLabelById = new Map(
   flattenStoreCategories(storeCategories).map((c) => [c.id, c.label] as const),
@@ -37,14 +47,13 @@ export function ProductCard({ product }: { product: Product }) {
         id={product.id}
         className="overflow-hidden"
         onClick={(e) => {
-          if (!isMobile) return;
           if ((e.target as HTMLElement | null)?.closest("button,a")) return;
           setOpen(true);
         }}
-        role={isMobile ? "button" : undefined}
-        tabIndex={isMobile ? 0 : undefined}
+        role="button"
+        tabIndex={0}
         onKeyDown={(e) => {
-          if (!isMobile) return;
+          if ((e.target as HTMLElement | null)?.closest("button,a")) return;
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             setOpen(true);
@@ -171,31 +180,7 @@ export function ProductCard({ product }: { product: Product }) {
               <DrawerDescription>{badgeLabel}</DrawerDescription>
             </DrawerHeader>
 
-            <div className="px-4">
-              <div className="aspect-[3/2] overflow-hidden rounded-lg border bg-card">
-                <img
-                  src={product.image}
-                  alt={`Imagen del ${product.name}`}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
-              </div>
-
-              <p className="mt-4 text-sm text-muted-foreground">{product.shortDescription}</p>
-
-              {product.included?.length ? (
-                <div className="mt-4">
-                  <p className="text-sm font-medium">Incluye</p>
-                  <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
-                    {product.included.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-
-              <p className="mt-4 text-lg font-semibold">{formatUsd(product.priceUsd)}</p>
-            </div>
+            <ProductDetailsBody product={product} badgeLabel={badgeLabel} />
 
             <DrawerFooter>
               <Button
@@ -217,7 +202,37 @@ export function ProductCard({ product }: { product: Product }) {
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
-      ) : null}
+      ) : (
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="font-serif">{product.name}</DialogTitle>
+              <DialogDescription>{badgeLabel}</DialogDescription>
+            </DialogHeader>
+
+            <ProductDetailsBody product={product} badgeLabel={badgeLabel} />
+
+            <DialogFooter>
+              <Button
+                variant="cta"
+                onClick={() => {
+                  add(product, 1);
+                  toast({
+                    title: "Agregado al carrito",
+                    description: `${product.name} se agregó correctamente.`,
+                  });
+                  setOpen(false);
+                }}
+              >
+                Agregar al carrito
+              </Button>
+              <DialogClose asChild>
+                <Button variant="outline">Cerrar</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 }
