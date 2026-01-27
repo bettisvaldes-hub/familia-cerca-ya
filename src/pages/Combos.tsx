@@ -61,10 +61,14 @@ export default function Combos() {
       return parent === filter;
     });
 
-    // Filtrado por municipio: si el producto tiene `availableIn`, debe incluir el id.
-    // Si no tiene `availableIn`, asumimos disponibilidad general en Artemisa.
+    // Filtrado por municipio:
+    // - availableIn === undefined  -> disponible en toda Artemisa
+    // - availableIn: []            -> NO disponible
+    // - availableIn con valores    -> debe incluir el id del municipio
     if (!municipality) return byCategory;
-    return byCategory.filter((p) => !p.availableIn?.length || p.availableIn.includes(municipality.id));
+    return byCategory.filter(
+      (p) => p.availableIn === undefined || p.availableIn.includes(municipality.id),
+    );
   }, [filter, municipality]);
 
   const filteredAndSearched = useMemo(() => {
@@ -73,7 +77,7 @@ export default function Combos() {
     if (query.trim()) {
       const base = !municipality
         ? products
-        : products.filter((p) => !p.availableIn?.length || p.availableIn.includes(municipality.id));
+        : products.filter((p) => p.availableIn === undefined || p.availableIn.includes(municipality.id));
       return filterAndSortByQuery(base, query, (p) => p.name);
     }
 
