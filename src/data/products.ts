@@ -106,12 +106,7 @@ const rawProducts: Product[] = [
   { id: "legacy-electro-86", name: "Batidora Milexus", shortDescription: "Batidora 1.5 Lt vaso de cristal", priceUsd: 45, image: "/images/batidora.png", categoryId: "electrodomesticos" },
 ];
 
-// Si un producto no tiene imagen (image vacío), se marca como no disponible.
-export const products: Product[] = rawProducts.map((product) => {
-  const hasImage = typeof product.image === "string" && product.image.trim().length > 0;
-  if (hasImage) return product;
-  return {
-    ...product,
-    availableIn: [],
-  };
+// Si un producto no tiene imagen (image vacío), NO se muestra en el catálogo.
+export const products: Product[] = rawProducts.filter((product) => {
+  return typeof product.image === "string" && product.image.trim().length > 0;
 });
