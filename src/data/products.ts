@@ -19,7 +19,6 @@ const rawProducts: Product[] = [
   // --- Inventario legacy (tal como lo compartiste) ---
   // Nota: estos productos apuntan a categorías TOP LEVEL (combo/carnicos/etc.)
   // y se verán al filtrar por la categoría correspondiente.
-  { id: "legacy-carnicos-40", name: "Pollo caja de 33 lb de postas", shortDescription: "Caja de 33 lb de pollo", priceUsd: 38, image: "/images/pollo_caja33.png", categoryId: "carnicos-y-embutidos", availableIn: [1, 2] },
   { id: "legacy-carnicos-42", name: "Lomo de Cerdo Importado", shortDescription: "Porción de 3 Lb", priceUsd: 11.2, image: "/images/lomo.png", categoryId: "carnicos-y-embutidos", availableIn: [1, 2, 4, 5, 6, 7, 8, 9, 10, 11] },
   { id: "legacy-carnicos-2", name: "Pollo paquete de 10 lb", shortDescription: "Paquete de 10 lb de pollo", priceUsd: 11.4, image: "/images/pollo10lb.png", categoryId: "carnicos-y-embutidos", availableIn: [1, 2, 4, 5, 6, 7, 8, 9, 10, 11] },
   { id: "legacy-carnicos-88-a", name: "Pollo paquete de 11 lb", shortDescription: "Paquete de 11 lb de pollo", priceUsd: 13.2, image: "/images/pollo10lb.png", categoryId: "carnicos-y-embutidos", availableIn: [1, 2] },
