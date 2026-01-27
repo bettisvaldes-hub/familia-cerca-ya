@@ -60,11 +60,11 @@ export function ProductCard({ product }: { product: Product }) {
           }
         }}
       >
-        <div className="mx-auto w-full max-w-[500px] aspect-square overflow-hidden">
+        <div className="mx-auto w-full max-w-[500px] aspect-square overflow-hidden bg-muted">
           <img
             src={product.image}
             alt={`Imagen del ${product.name}`}
-            className="h-full w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+            className="h-full w-full object-contain p-2"
             loading="lazy"
           />
         </div>
