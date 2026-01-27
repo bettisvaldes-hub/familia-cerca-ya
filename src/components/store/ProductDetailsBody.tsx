@@ -10,11 +10,11 @@ export function ProductDetailsBody({
 }) {
   return (
     <div className="px-4">
-      <div className="mx-auto w-full max-w-[500px] aspect-square overflow-hidden rounded-lg border bg-muted">
+      <div className="mx-auto w-full max-w-[500px] aspect-square overflow-hidden rounded-lg border bg-muted p-2">
         <img
           src={product.image}
           alt={`Imagen del ${product.name}`}
-          className="h-full w-full object-contain p-2"
+          className="h-full w-full object-contain"
           loading="lazy"
         />
       </div>
