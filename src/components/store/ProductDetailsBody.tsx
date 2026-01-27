@@ -10,7 +10,7 @@ export function ProductDetailsBody({
 }) {
   return (
     <div className="px-4">
-      <div className="aspect-[3/2] overflow-hidden rounded-lg border bg-card">
+      <div className="mx-auto w-full max-w-[500px] aspect-square overflow-hidden rounded-lg border bg-card">
         <img
           src={product.image}
           alt={`Imagen del ${product.name}`}
