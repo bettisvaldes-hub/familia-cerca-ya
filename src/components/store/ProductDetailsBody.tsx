@@ -16,6 +16,10 @@ export function ProductDetailsBody({
           alt={`Imagen del ${product.name}`}
           className="h-full w-full object-contain"
           loading="lazy"
+          onError={(e) => {
+            // En detalle, si la imagen no existe, mostramos placeholder para evitar “cuadro roto”.
+            (e.currentTarget as HTMLImageElement).src = "/placeholder.svg";
+          }}
         />
       </div>
 

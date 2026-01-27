@@ -38,8 +38,12 @@ export function ProductCard({ product }: { product: Product }) {
   const isMobile = useIsMobile();
   const [open, setOpen] = React.useState(false);
   const [qty, setQty] = React.useState(1);
+  const [imageFailed, setImageFailed] = React.useState(false);
 
   const badgeLabel = categoryLabelById.get(product.categoryId) ?? "Producto";
+
+  // Si la imagen falla (404 / ruta incorrecta), lo tratamos como “sin foto” y no mostramos el producto.
+  if (imageFailed) return null;
 
   return (
     <>
@@ -66,6 +70,12 @@ export function ProductCard({ product }: { product: Product }) {
             alt={`Imagen del ${product.name}`}
             className="h-full w-full object-contain"
             loading="lazy"
+            onError={() => {
+              // Evita productos con imagen rota en el catálogo (especialmente visible en móvil).
+              setImageFailed(true);
+              // eslint-disable-next-line no-console
+              console.warn("Imagen no encontrada para producto:", product.name, product.image);
+            }}
           />
         </div>
 
