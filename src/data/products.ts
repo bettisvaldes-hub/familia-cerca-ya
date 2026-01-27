@@ -42,8 +42,8 @@ const rawProducts: Product[] = [
   { id: "legacy-lacteos-20", name: "Cartón de huevos", shortDescription: "Cartón de huevos frescos", priceUsd: 8.5, image: "/images/huevo30.png", categoryId: "lacteos-y-huevos", availableIn: [4, 5, 6, 7, 8, 9, 10, 11] },
   { id: "legacy-lacteos-22", name: "Leche condensada de cajita", shortDescription: "Leche condensada de cajita", priceUsd: 1.65, image: "/images/cajitaleche.png", categoryId: "lacteos-y-huevos" },
   { id: "legacy-lacteos-23", name: "Leche condensada lata", shortDescription: "Leche condensada lata", priceUsd: 1.8, image: "/images/nezkaleche.png", categoryId: "lacteos-y-huevos", availableIn: [] },
-  { id: "legacy-lacteos-55", name: "Helado", shortDescription: "Cubeta de 3L", priceUsd: 9, image: "/images/helado.png", categoryId: "lacteos-y-huevos", availableIn: [4, 5, 6, 7, 8, 9, 10, 11] },
-  { id: "legacy-lacteos-57", name: "Leche en Polvo", shortDescription: "Bolsa de 1 kg", priceUsd: 8.5, image: "/images/lechepolvomu.png", categoryId: "lacteos-y-huevos", availableIn: [4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: "legacy-lacteos-55", name: "Helado", shortDescription: "Cubeta de 3L", priceUsd: 9, image: "/images/helado-cubeta.png", categoryId: "lacteos-y-huevos", availableIn: [4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: "legacy-lacteos-57b", name: "Leche en Polvo", shortDescription: "Bolsa de 1 kg", priceUsd: 7.8, image: "/images/leche-polvo-1kg.png", categoryId: "lacteos-y-huevos", availableIn: [4, 5, 6, 7, 8, 9, 10, 11] },
   { id: "legacy-lacteos-58", name: "Cartón de huevos", shortDescription: "30 uds frescos 100% orgánicos", priceUsd: 9.4, image: "/images/huevo30.png", categoryId: "lacteos-y-huevos", availableIn: [1, 2] },
 
   // Cereales, pastas y granos
