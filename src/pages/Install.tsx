@@ -2,6 +2,7 @@
  import { Share, MoreVertical, Plus } from "lucide-react";
  import { usePwaInstall } from "@/hooks/use-pwa-install";
  import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo-tudespensa25.png";
  
  export default function Install() {
    const { isIOS, isAndroidOrDesktop, installPwa } = usePwaInstall();
@@ -10,7 +11,7 @@
      <div className="container max-w-2xl mx-auto px-4 py-8">
        <div className="mb-8 text-center">
          <img 
-           src="/pwa-icon.png" 
+            src={logo} 
            alt="TuDespensa25" 
            className="w-24 h-24 mx-auto mb-4 rounded-2xl shadow-lg"
          />

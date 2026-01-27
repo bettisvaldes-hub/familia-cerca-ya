@@ -60,7 +60,7 @@ export function ProductCard({ product }: { product: Product }) {
           }
         }}
       >
-        <div className="aspect-[3/2] overflow-hidden">
+        <div className="mx-auto w-full max-w-[500px] aspect-square overflow-hidden">
           <img
             src={product.image}
             alt={`Imagen del ${product.name}`}

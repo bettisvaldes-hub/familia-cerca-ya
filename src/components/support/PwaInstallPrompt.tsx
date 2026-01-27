@@ -4,6 +4,7 @@
  import { usePwaInstall } from "@/hooks/use-pwa-install";
  import { useState } from "react";
  import { Link } from "react-router-dom";
+import logo from "@/assets/logo-tudespensa25.png";
  
  export function PwaInstallPrompt() {
    const { canInstall, isIOS, isAndroidOrDesktop, installPwa, isStandalone } = usePwaInstall();
@@ -26,7 +27,7 @@
        <div className="flex items-start gap-3">
          <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-primary/10 flex items-center justify-center">
            <img 
-             src="/pwa-icon.png" 
+              src={logo} 
              alt="TuDespensa25" 
              className="w-10 h-10 object-contain"
            />
