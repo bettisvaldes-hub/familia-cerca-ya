@@ -25,8 +25,8 @@ const navItems = [
 ];
 
 const socialLinks = {
-  instagram: "https://instagram.com/tudespensa25",
-  facebook: "https://facebook.com/tudespensa25",
+  instagram: "https://www.instagram.com/tudespensa.25?igsh=MWt5dzZjcWh0NnF0MA==",
+  facebook: "https://www.facebook.com/share/16cchoNUTo/",
 } as const;
 
 function CategoryMegaMenu() {
