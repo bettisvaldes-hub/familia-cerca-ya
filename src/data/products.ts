@@ -15,7 +15,7 @@ export type Product = {
   availableIn?: number[];
 };
 
-export const products: Product[] = [
+const rawProducts: Product[] = [
   // --- Inventario legacy (tal como lo compartiste) ---
   // Nota: estos productos apuntan a categorías TOP LEVEL (combo/carnicos/etc.)
   // y se verán al filtrar por la categoría correspondiente.
@@ -105,3 +105,13 @@ export const products: Product[] = [
   { id: "legacy-electro-85", name: "Tv de 32", shortDescription: "Tv inteligente 32 pulgadas", priceUsd: 220, image: "/images/32.png", categoryId: "electrodomesticos" },
   { id: "legacy-electro-86", name: "Batidora Milexus", shortDescription: "Batidora 1.5 Lt vaso de cristal", priceUsd: 45, image: "/images/batidora.png", categoryId: "electrodomesticos" },
 ];
+
+// Si un producto no tiene imagen (image vacío), se marca como no disponible.
+export const products: Product[] = rawProducts.map((product) => {
+  const hasImage = typeof product.image === "string" && product.image.trim().length > 0;
+  if (hasImage) return product;
+  return {
+    ...product,
+    availableIn: [],
+  };
+});
