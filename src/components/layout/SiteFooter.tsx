@@ -36,8 +36,7 @@ export function SiteFooter() {
 
         <div className="grid gap-2 text-sm">
           <p className="font-medium">Horario</p>
-          <p className="text-muted-foreground">Lun–Sáb: 9:00–18:00</p>
-          <p className="text-muted-foreground">Dom: 10:00–14:00</p>
+          <p className="text-muted-foreground">24 horas · 7 días a la semana</p>
           <p className="text-muted-foreground">Soporte por WhatsApp</p>
         </div>
       </div>

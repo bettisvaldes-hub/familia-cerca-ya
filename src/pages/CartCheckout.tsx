@@ -27,10 +27,6 @@ type RecipientValues = z.infer<typeof recipientSchema>;
 
 type Step = 1 | 2 | 3;
 
-// TODO: Reemplazar por tus datos reales de cobro.
-const ZELLE_RECIPIENT_NAME = "Tu Nombre";
-const ZELLE_RECIPIENT_EMAIL = "tucorreo@zelle.com";
-
 export default function CartCheckout() {
   useSeo({
     title: "Carrito y Checkout | Envío en 3 pasos",
@@ -48,7 +44,7 @@ export default function CartCheckout() {
 
   const estimated = useMemo(() => {
     if (items.length === 0) return "—";
-    return "24–72 horas";
+    return "24–48 horas";
   }, [items.length]);
 
   const goNextFromCart = () => {
@@ -79,8 +75,6 @@ export default function CartCheckout() {
       recipient: values,
       items,
       totalUsd: subtotalUsd,
-      zelleName: ZELLE_RECIPIENT_NAME,
-      zelleEmail: ZELLE_RECIPIENT_EMAIL,
     });
 
     const href = buildWhatsAppHref(message);
@@ -88,7 +82,7 @@ export default function CartCheckout() {
 
     toast({
       title: "Te llevamos a WhatsApp",
-      description: "Envía el mensaje para confirmar el pedido y coordinar el pago por Zelle.",
+      description: "Envía el mensaje para confirmar el pedido. Te compartimos los datos de pago por WhatsApp.",
     });
   };
 
@@ -233,14 +227,9 @@ export default function CartCheckout() {
 
                   <div className="space-y-2 text-sm">
                     <p className="font-medium">Zelle</p>
-                    <p className="text-muted-foreground">
-                      Beneficiario: <span className="font-medium text-foreground">{ZELLE_RECIPIENT_NAME}</span>
-                    </p>
-                    <p className="text-muted-foreground">
-                      Email: <span className="font-medium text-foreground">{ZELLE_RECIPIENT_EMAIL}</span>
-                    </p>
+                    <p className="text-muted-foreground">Los datos de pago por Zelle se envían por WhatsApp al confirmar el pedido.</p>
                     <p className="text-xs text-muted-foreground">
-                      Al enviar el pedido por WhatsApp, te indicaremos el monto final y confirmaremos la entrega.
+                      Al enviar el pedido por WhatsApp, confirmamos el monto final y coordinamos la entrega.
                     </p>
                   </div>
                 </div>
@@ -334,21 +323,17 @@ function buildOrderMessage({
   recipient,
   items,
   totalUsd,
-  zelleName,
-  zelleEmail,
 }: {
   recipient: RecipientValues;
   items: Array<{ name: string; priceUsd: number; quantity: number }>;
   totalUsd: number;
-  zelleName: string;
-  zelleEmail: string;
 }) {
   const lines = items
     .map((it) => `- ${it.quantity} x ${it.name} (${formatUsd(it.priceUsd)}): ${formatUsd(it.priceUsd * it.quantity)}`)
     .join("\n");
 
   return [
-    "Hola, quiero confirmar un pedido:",
+    "Hola 👋 Quiero confirmar un pedido:",
     "",
     "Productos:",
     lines,
@@ -363,8 +348,7 @@ function buildOrderMessage({
     recipient.referencia ? `Referencia: ${recipient.referencia}` : "",
     "",
     "Método de pago: Zelle",
-    `Beneficiario: ${zelleName}`,
-    `Email: ${zelleEmail}`,
+    "Por favor envíenme los datos de pago por aquí. ¡Gracias!",
   ]
     .filter(Boolean)
     .join("\n");
