@@ -1,21 +1,27 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import type { Municipality } from "@/data/municipalities-artemisa";
+import type { DeliveryMunicipality } from "@/data/delivery-areas";
 
 type MunicipalityContextValue = {
-  municipality: Municipality | null;
-  setMunicipality: (m: Municipality | null) => void;
+  municipality: DeliveryMunicipality | null;
+  setMunicipality: (m: DeliveryMunicipality | null) => void;
 };
 
 const MunicipalityContext = createContext<MunicipalityContextValue | null>(null);
 
-const STORAGE_KEY = "tudespensa25_municipality_v1";
+const STORAGE_KEY = "tudespensa25_municipality_v2";
 
-function safeLoad(): Municipality | null {
+function safeLoad(): DeliveryMunicipality | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as Municipality;
-    if (!parsed || typeof parsed.id !== "number" || typeof parsed.name !== "string") return null;
+    const parsed = JSON.parse(raw) as DeliveryMunicipality;
+    if (
+      !parsed ||
+      typeof parsed.id !== "number" ||
+      typeof parsed.name !== "string" ||
+      (parsed.provinceId !== "artemisa" && parsed.provinceId !== "habana")
+    )
+      return null;
     return parsed;
   } catch {
     return null;
@@ -23,9 +29,9 @@ function safeLoad(): Municipality | null {
 }
 
 export function MunicipalityProvider({ children }: { children: React.ReactNode }) {
-  const [municipality, setMunicipalityState] = useState<Municipality | null>(() => safeLoad());
+  const [municipality, setMunicipalityState] = useState<DeliveryMunicipality | null>(() => safeLoad());
 
-  const setMunicipality = (m: Municipality | null) => {
+  const setMunicipality = (m: DeliveryMunicipality | null) => {
     setMunicipalityState(m);
   };
 
