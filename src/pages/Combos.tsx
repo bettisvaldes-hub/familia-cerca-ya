@@ -8,7 +8,6 @@ import { useSeo } from "@/hooks/use-seo";
 import { flattenStoreCategories, storeCategories } from "@/data/categories";
 import { normalizeCategoryId } from "@/data/legacy-catalog";
 import { useMunicipality } from "@/context/municipality";
-import { artemisaMunicipalities } from "@/data/municipalities-artemisa";
 import { filterAndSortByQuery } from "@/lib/search";
 import {
   Dialog,
@@ -20,6 +19,12 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, X } from "lucide-react";
+import {
+  findDeliveryMunicipality,
+  getMunicipalitiesByProvince,
+  provinces,
+  type ProvinceId,
+} from "@/data/delivery-areas";
 
 type StoreCategoryId = ReturnType<typeof flattenStoreCategories>[number]["id"];
 
@@ -37,6 +42,7 @@ export default function Combos() {
   });
 
   const { municipality, setMunicipality } = useMunicipality();
+  const [provinceDraftId, setProvinceDraftId] = useState<ProvinceId>(municipality?.provinceId ?? "artemisa");
   const [municipalityDraftId, setMunicipalityDraftId] = useState<string>(municipality ? String(municipality.id) : "");
 
   const [query, setQuery] = useState("");
@@ -61,14 +67,26 @@ export default function Combos() {
       return parent === filter;
     });
 
-    // Filtrado por municipio:
-    // - availableIn === undefined  -> disponible en toda Artemisa
-    // - availableIn: []            -> NO disponible
-    // - availableIn con valores    -> debe incluir el id del municipio
+    // Filtrado por grupo (según selección):
+    // Grupo 1 -> San Cristóbal (1) + Candelaria (2)
+    // Grupo 2 -> resto de Artemisa + todos los municipios de La Habana
+    //
+    // Regla por disponibilidad (recomendado):
+    // - availableIn === undefined -> disponible para ambos grupos
+    // - availableIn: []           -> NO disponible
+    // - Grupo 1: debe incluir 1 o 2
+    // - Grupo 2: debe incluir algún municipio distinto de 1 o 2
     if (!municipality) return byCategory;
-    return byCategory.filter(
-      (p) => p.availableIn === undefined || p.availableIn.includes(municipality.id),
-    );
+
+    const isGroup1 = municipality.provinceId === "artemisa" && (municipality.id === 1 || municipality.id === 2);
+
+    return byCategory.filter((p) => {
+      if (p.availableIn === undefined) return true;
+      if (!p.availableIn.length) return false;
+
+      if (isGroup1) return p.availableIn.some((id) => id === 1 || id === 2);
+      return p.availableIn.some((id) => id !== 1 && id !== 2);
+    });
   }, [filter, municipality]);
 
   const filteredAndSearched = useMemo(() => {
@@ -77,7 +95,14 @@ export default function Combos() {
     if (query.trim()) {
       const base = !municipality
         ? products
-        : products.filter((p) => p.availableIn === undefined || p.availableIn.includes(municipality.id));
+        : products.filter((p) => {
+            const isGroup1 =
+              municipality.provinceId === "artemisa" && (municipality.id === 1 || municipality.id === 2);
+            if (p.availableIn === undefined) return true;
+            if (!p.availableIn.length) return false;
+            if (isGroup1) return p.availableIn.some((id) => id === 1 || id === 2);
+            return p.availableIn.some((id) => id !== 1 && id !== 2);
+          });
       return filterAndSortByQuery(base, query, (p) => p.name);
     }
 
@@ -95,23 +120,44 @@ export default function Combos() {
           <DialogHeader>
             <DialogTitle className="font-serif">Selecciona tu municipio</DialogTitle>
             <DialogDescription>
-              Entregamos en toda la provincia Artemisa (Cuba). Elige tu municipio para mostrar solo lo disponible.
+              Selecciona primero la provincia y luego tu municipio para mostrar solo lo disponible.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-2">
-            <Select value={municipalityDraftId} onValueChange={setMunicipalityDraftId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Elige un municipio" />
-              </SelectTrigger>
-              <SelectContent>
-                {artemisaMunicipalities.map((m) => (
-                  <SelectItem key={m.id} value={String(m.id)}>
-                    {m.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="grid gap-2">
+              <Select
+                value={provinceDraftId}
+                onValueChange={(v) => {
+                  setProvinceDraftId(v as ProvinceId);
+                  setMunicipalityDraftId("");
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Provincia" />
+                </SelectTrigger>
+                <SelectContent>
+                  {provinces.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {p.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={municipalityDraftId} onValueChange={setMunicipalityDraftId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Municipio" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getMunicipalitiesByProvince(provinceDraftId).map((m) => (
+                    <SelectItem key={m.id} value={String(m.id)}>
+                      {m.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <p className="text-xs text-muted-foreground">
               Puedes cambiar el municipio después desde la tienda.
             </p>
@@ -122,7 +168,7 @@ export default function Combos() {
               variant="cta"
               disabled={!municipalityDraftId}
               onClick={() => {
-                const next = artemisaMunicipalities.find((m) => String(m.id) === municipalityDraftId) ?? null;
+                const next = findDeliveryMunicipality(provinceDraftId, Number(municipalityDraftId));
                 setMunicipality(next);
               }}
             >
@@ -136,7 +182,7 @@ export default function Combos() {
         <div>
           <h1 className="font-serif text-3xl">Tienda · {filterLabel}</h1>
           <p className="mt-2 text-muted-foreground">
-            Entregamos en toda la provincia Artemisa (Cuba).{municipality ? ` Municipio: ${municipality.name}.` : ""}
+            Entregamos en Artemisa y La Habana (Cuba).{municipality ? ` Municipio: ${municipality.name}.` : ""}
           </p>
         </div>
 
@@ -166,18 +212,40 @@ export default function Combos() {
 
           <div className="flex flex-wrap items-center gap-2">
           <Select
+            value={municipality ? municipality.provinceId : ""}
+            onValueChange={(v) => {
+              const nextProvince = v as ProvinceId;
+              setProvinceDraftId(nextProvince);
+              setMunicipality(null);
+              setMunicipalityDraftId("");
+            }}
+          >
+            <SelectTrigger className="h-9 w-[180px]">
+              <SelectValue placeholder="Provincia" />
+            </SelectTrigger>
+            <SelectContent>
+              {provinces.map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
             value={municipality ? String(municipality.id) : ""}
             onValueChange={(v) => {
-              const next = artemisaMunicipalities.find((m) => String(m.id) === v) ?? null;
+              const activeProvince = municipality?.provinceId ?? provinceDraftId;
+              const next = findDeliveryMunicipality(activeProvince, Number(v));
               setMunicipality(next);
               setMunicipalityDraftId(v);
             }}
           >
-            <SelectTrigger className="h-9 w-[220px]">
+            <SelectTrigger className="h-9 w-[260px]">
               <SelectValue placeholder="Municipio" />
             </SelectTrigger>
             <SelectContent>
-              {artemisaMunicipalities.map((m) => (
+              {getMunicipalitiesByProvince(municipality?.provinceId ?? provinceDraftId).map((m) => (
                 <SelectItem key={m.id} value={String(m.id)}>
                   {m.name}
                 </SelectItem>
