@@ -189,6 +189,25 @@ const rawProducts: Product[] = [
     included: ["Malta Guajira (2)", "Leche condensada (2)"],
   },
 
+  {
+    id: "combo-25",
+    name: "Combo 25",
+    shortDescription: "Arroz, azúcar, frijoles, pollo, lomo y aceite (importado).",
+    priceUsd: 25,
+    image: "/images/combo25.png",
+    categoryId: "combos",
+    // Disponible en ambos grupos (incluye 1/2 y también municipios fuera de 1/2)
+    availableIn: [1, 2, 4, 5, 6, 7, 8, 9, 10, 11],
+    included: [
+      "Arroz importado (5 lb)",
+      "Azúcar blanca importada (3 lb)",
+      "Frijoles negros importados (2 lb)",
+      "Pollo (4.4 lb)",
+      "Lomo de cerdo deshuesado importado (2 lb)",
+      "Aceite 1 L (1 botella)",
+    ],
+  },
+
   { id: "legacy-carnicos-42", name: "Lomo de Cerdo Importado", shortDescription: "Porción de 3 Lb", priceUsd: 11.2, image: "/images/lomo.png", categoryId: "carnicos-y-embutidos", availableIn: [1, 2, 4, 5, 6, 7, 8, 9, 10, 11] },
   { id: "legacy-carnicos-2", name: "Pollo paquete de 10 lb", shortDescription: "Paquete de 10 lb de pollo", priceUsd: 11.4, image: "/images/pollo10lb.png", categoryId: "carnicos-y-embutidos", availableIn: [1, 2, 4, 5, 6, 7, 8, 9, 10, 11] },
   { id: "legacy-carnicos-88-a", name: "Pollo paquete de 11 lb", shortDescription: "Paquete de 11 lb de pollo", priceUsd: 13.2, image: "/images/pollo10lb.png", categoryId: "carnicos-y-embutidos", availableIn: [1, 2] },
