@@ -21,6 +21,13 @@ const Index = () => {
     <main className="bg-background">
       <header className="border-b bg-card">
         <section className="container py-10 sm:py-14">
+          <section className="mb-6 rounded-lg border bg-destructive p-4 text-destructive-foreground">
+            <p className="text-lg font-semibold tracking-wide">OFERTA FLASH -5% EN TODO</p>
+            <p className="mt-1 text-sm/5 opacity-90">
+              Precios en USD • Entrega a domicilio en 24–48 horas • Checkout por WhatsApp
+            </p>
+          </section>
+
           <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
             <div className="space-y-6 animate-in fade-in-0 slide-in-from-bottom-2">
               <div className="flex flex-wrap gap-2">
