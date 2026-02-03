@@ -275,6 +275,15 @@ export default function Combos() {
         </div>
       </header>
 
+      <section className="mt-4 rounded-lg border bg-card p-4">
+        <p className="font-medium">
+          OFERTA -5% <span className="text-muted-foreground">(ya aplicada)</span>
+        </p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Verás el precio original tachado y el precio final con el descuento en cada producto.
+        </p>
+      </section>
+
       {filteredAndSearched.length > 0 ? (
         <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {filteredAndSearched.map((product) => (
