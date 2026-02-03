@@ -275,13 +275,9 @@ export default function Combos() {
         </div>
       </header>
 
-      <section className="mt-4 rounded-lg border bg-card p-4">
-        <p className="font-medium">
-          OFERTA -5% <span className="text-muted-foreground">(ya aplicada)</span>
-        </p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Verás el precio original tachado y el precio final con el descuento en cada producto.
-        </p>
+      <section className="mt-4 rounded-lg border bg-destructive p-4 text-destructive-foreground">
+        <p className="text-lg font-semibold tracking-wide">OFERTA FLASH -5% EN TODO</p>
+        <p className="mt-1 text-sm/5 opacity-90">Aprovecha hoy y envía a tu familia en minutos.</p>
       </section>
 
       {filteredAndSearched.length > 0 ? (

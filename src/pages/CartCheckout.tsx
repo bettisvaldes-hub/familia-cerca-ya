@@ -3,6 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { Minus, Plus } from "lucide-react";
 
 import { useCart } from "@/context/cart";
 import { Button } from "@/components/ui/button";
@@ -149,16 +150,40 @@ export default function CartCheckout() {
                             <Label htmlFor={`qty-${it.productId}`} className="text-sm text-muted-foreground">
                               Cantidad
                             </Label>
-                            <Input
-                              id={`qty-${it.productId}`}
-                              type="number"
-                              inputMode="numeric"
-                              min={1}
-                              max={99}
-                              value={it.quantity}
-                              onChange={(e) => setQty(it.productId, Number(e.target.value))}
-                              className="h-9 w-20"
-                            />
+
+                            <div className="flex items-center overflow-hidden rounded-md border bg-background">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-9 w-9 rounded-none"
+                                onClick={() => setQty(it.productId, Math.max(1, it.quantity - 1))}
+                                aria-label="Disminuir cantidad"
+                              >
+                                <Minus className="h-4 w-4" />
+                              </Button>
+                              <Input
+                                id={`qty-${it.productId}`}
+                                type="number"
+                                inputMode="numeric"
+                                min={1}
+                                max={99}
+                                value={it.quantity}
+                                onChange={(e) => setQty(it.productId, Number(e.target.value))}
+                                className="h-9 w-16 border-0 bg-transparent text-center tabular-nums shadow-none focus-visible:ring-0"
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-9 w-9 rounded-none"
+                                onClick={() => setQty(it.productId, Math.min(99, it.quantity + 1))}
+                                aria-label="Aumentar cantidad"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
+
                             <Button
                               variant="outline"
                               size="sm"
