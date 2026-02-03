@@ -40,6 +40,8 @@ export function ProductCard({ product }: { product: Product }) {
   const [qty, setQty] = React.useState(1);
   const [imageFailed, setImageFailed] = React.useState(false);
 
+  const originalUsd = Math.round((product.priceUsd / 0.95) * 100) / 100;
+
   const badgeLabel = categoryLabelById.get(product.categoryId) ?? "Producto";
 
   // Si la imagen falla (404 / ruta incorrecta), lo tratamos como “sin foto” y no mostramos el producto.
@@ -90,7 +92,11 @@ export function ProductCard({ product }: { product: Product }) {
             <CardContent className="space-y-1 p-4">
               <CardTitle className="font-serif text-base leading-snug line-clamp-2">{product.name}</CardTitle>
               <p className="text-xs text-muted-foreground">{badgeLabel}</p>
-              <p className="pt-1 text-base font-semibold">{formatUsd(product.priceUsd)}</p>
+              <div className="pt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <p className="text-xs text-muted-foreground line-through">{formatUsd(originalUsd)}</p>
+                <p className="text-base font-semibold">{formatUsd(product.priceUsd)}</p>
+                <p className="text-[10px] text-muted-foreground">-5%</p>
+              </div>
             </CardContent>
 
             <CardFooter className="gap-2 p-4 pt-0">
@@ -166,7 +172,11 @@ export function ProductCard({ product }: { product: Product }) {
                   </ul>
                 </div>
               ) : null}
-              <p className="text-lg font-semibold">{formatUsd(product.priceUsd)}</p>
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <p className="text-sm text-muted-foreground line-through">{formatUsd(originalUsd)}</p>
+                <p className="text-lg font-semibold">{formatUsd(product.priceUsd)}</p>
+                <p className="text-xs text-muted-foreground">-5%</p>
+              </div>
             </CardContent>
 
             <CardFooter className="gap-2">

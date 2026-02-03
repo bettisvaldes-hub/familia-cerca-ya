@@ -9,6 +9,8 @@ export function ProductDetailsBody({
   product: Product;
   badgeLabel: string;
 }) {
+  const originalUsd = Math.round((product.priceUsd / 0.95) * 100) / 100;
+
   return (
     <div className="px-4">
       <div className="relative mx-auto w-full max-w-[500px] aspect-square overflow-hidden rounded-lg border bg-muted p-2">
@@ -43,7 +45,11 @@ export function ProductDetailsBody({
         </div>
       ) : null}
 
-      <p className="mt-4 text-lg font-semibold">{formatUsd(product.priceUsd)}</p>
+      <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <p className="text-sm text-muted-foreground line-through">{formatUsd(originalUsd)}</p>
+        <p className="text-lg font-semibold">{formatUsd(product.priceUsd)}</p>
+        <p className="text-xs text-muted-foreground">-5%</p>
+      </div>
       <p className="sr-only">Categoría: {badgeLabel}</p>
     </div>
   );
