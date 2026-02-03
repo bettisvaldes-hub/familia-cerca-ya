@@ -83,8 +83,13 @@ const Index = () => {
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {destacados.map((product) => (
-              <ProductCard key={product.id} product={product} />
+          {destacados.map((product) => (
+            <div key={product.id} className="relative">
+              <Badge variant="destructive" className="absolute left-3 top-3 z-10 shadow-sm">
+                OFERTA -5%
+              </Badge>
+              <ProductCard product={product} />
+            </div>
           ))}
         </div>
       </section>
