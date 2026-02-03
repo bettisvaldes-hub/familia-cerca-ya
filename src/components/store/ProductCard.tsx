@@ -64,7 +64,13 @@ export function ProductCard({ product }: { product: Product }) {
           }
         }}
       >
-        <div className="mx-auto w-full max-w-[500px] aspect-square overflow-hidden bg-muted p-2">
+        <div className="relative mx-auto w-full max-w-[500px] aspect-square overflow-hidden bg-muted p-2">
+          <Badge
+            variant="secondary"
+            className="absolute left-3 top-3 z-10 px-3 py-1 text-sm font-semibold tracking-wide"
+          >
+            OFERTA -5%
+          </Badge>
           <img
             src={product.image}
             alt={`Imagen del ${product.name}`}
