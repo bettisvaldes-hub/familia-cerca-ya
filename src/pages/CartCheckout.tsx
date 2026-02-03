@@ -13,9 +13,12 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import { useSeo } from "@/hooks/use-seo";
 import { formatUsd } from "@/lib/money";
-import { buildWhatsAppHref } from "@/lib/whatsapp";
+import { WHATSAPP_PHONE_E164, buildWhatsAppHref } from "@/lib/whatsapp";
+import { useMunicipality } from "@/context/municipality";
 
 const recipientSchema = z.object({
+  compradorNombre: z.string().trim().min(2, "Nombre requerido").max(80),
+  compradorTelefono: z.string().trim().min(6, "Teléfono requerido").max(30),
   nombre: z.string().trim().min(2, "Nombre requerido").max(80),
   telefono: z.string().trim().min(6, "Teléfono requerido").max(30),
   direccion: z.string().trim().min(10, "Dirección requerida").max(160),
@@ -35,11 +38,20 @@ export default function CartCheckout() {
   });
 
   const { items, subtotalUsd, setQty, remove, clear } = useCart();
+  const { municipality } = useMunicipality();
   const [step, setStep] = useState<Step>(1);
 
   const form = useForm<RecipientValues>({
     resolver: zodResolver(recipientSchema),
-    defaultValues: { nombre: "", telefono: "", direccion: "", ciudad: "", referencia: "" },
+    defaultValues: {
+      compradorNombre: "",
+      compradorTelefono: "",
+      nombre: "",
+      telefono: "",
+      direccion: "",
+      ciudad: "",
+      referencia: "",
+    },
   });
 
   const estimated = useMemo(() => {
@@ -73,6 +85,9 @@ export default function CartCheckout() {
     const values = form.getValues();
     const message = buildOrderMessage({
       recipient: values,
+      municipalityLabel: municipality
+        ? `${municipality.provinceId === "habana" ? "La Habana" : "Artemisa"}, ${municipality.name}`
+        : "(no seleccionado)",
       items,
       totalUsd: subtotalUsd,
     });
@@ -180,6 +195,29 @@ export default function CartCheckout() {
                 <CardTitle className="font-serif">Datos del destinatario</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="rounded-lg border bg-background p-4">
+                  <p className="font-medium">Datos del comprador</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Estos datos se incluyen en el mensaje que se envía por WhatsApp.
+                  </p>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <Field label="Nombre del comprador" error={form.formState.errors.compradorNombre?.message}>
+                      <Input {...form.register("compradorNombre")} placeholder="Ej: Daniela Robaina" />
+                    </Field>
+                    <Field label="Teléfono del comprador" error={form.formState.errors.compradorTelefono?.message}>
+                      <Input {...form.register("compradorTelefono")} placeholder="Ej: +53 000 000 0000" />
+                    </Field>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div>
+                  <p className="font-medium">Datos del beneficiario (quien recibe)</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Esta información nos ayuda a coordinar la entrega.
+                  </p>
+                </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <Field label="Nombre" error={form.formState.errors.nombre?.message}>
                     <Input {...form.register("nombre")} placeholder="Ej: María Pérez" />
@@ -321,34 +359,62 @@ function Field({
 
 function buildOrderMessage({
   recipient,
+  municipalityLabel,
   items,
   totalUsd,
 }: {
   recipient: RecipientValues;
+  municipalityLabel: string;
   items: Array<{ name: string; priceUsd: number; quantity: number }>;
   totalUsd: number;
 }) {
-  const lines = items
-    .map((it) => `- ${it.quantity} x ${it.name} (${formatUsd(it.priceUsd)}): ${formatUsd(it.priceUsd * it.quantity)}`)
-    .join("\n");
+  const products = items
+    .map((it, idx) => {
+      const subtotal = it.priceUsd * it.quantity;
+      return [
+        `${idx + 1}. ${it.name}`,
+        `   💰 Precio: ${formatUsd(it.priceUsd)} USD`,
+        `   📦 Cantidad: ${it.quantity}`,
+        `   💵 Subtotal: ${formatUsd(subtotal)} USD`,
+        "",
+      ].join("\n");
+    })
+    .join("\n")
+    .trim();
+
+  const subtotalLabel = `${formatUsd(totalUsd)} USD`;
 
   return [
-    "Hola 👋 Quiero confirmar un pedido:",
+    "*NUEVO PEDIDO - TuDespensa.25*",
     "",
-    "Productos:",
-    lines,
+    "*DATOS DEL COMPRADOR:*",
+    `👤 Nombre: ${recipient.compradorNombre}`,
+    `📱 Teléfono: ${recipient.compradorTelefono}`,
     "",
-    `Total estimado: ${formatUsd(totalUsd)} USD`,
+    "*DATOS DEL BENEFICIARIO (QUIEN RECIBE):*",
+    `👤 Nombre: ${recipient.nombre}`,
+    `📱 Teléfono: ${recipient.telefono}`,
     "",
-    "Datos del destinatario:",
-    `Nombre: ${recipient.nombre}`,
-    `Teléfono: ${recipient.telefono}`,
-    `Dirección: ${recipient.direccion}`,
-    `Ciudad: ${recipient.ciudad}`,
-    recipient.referencia ? `Referencia: ${recipient.referencia}` : "",
+    "*DATOS DE ENTREGA:*",
+    `📍 Dirección: ${recipient.direccion}`,
+    `🏘️ Municipio: ${municipalityLabel}`,
     "",
-    "Método de pago: Zelle",
-    "Por favor envíenme los datos de pago por aquí. ¡Gracias!",
+    "*PRODUCTOS SOLICITADOS:*",
+    products,
+    "",
+    "*RESUMEN DE PAGO:*",
+    `🛒 Subtotal: ${subtotalLabel}`,
+    `💰 *TOTAL DEL PEDIDO: ${subtotalLabel}*`,
+    "",
+    "*DATOS DEL VENDEDOR:*",
+    "🏪 Tienda: TuDespensa.25",
+    `📞 Contacto: +${WHATSAPP_PHONE_E164}`,
+    "📧 Email: ventas@tudespensa25.com",
+    "",
+    "*DATOS DE ENTREGA:*",
+    "🚚 Entrega a domicilio",
+    "⏰ Tiempo estimado: 24 a 48 horas",
+    "💳 Pago: transferencia Zelle",
   ]
     .filter(Boolean)
     .join("\n");
